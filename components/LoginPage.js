@@ -1,4 +1,11 @@
 import React, { useState } from "react";
+
+//import { API_BASE_URL } from '@env'; // import .env file variables
+const API_BASE_URL = "http://192.168.1.2:5000";
+const API_URL = `${API_BASE_URL}/api/login/login`; // Login API endpoint
+
+import { adminCredentials } from "../constants/adminCredentials"; // Admin details
+
 import {
   View,
   Text,
@@ -12,59 +19,38 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const LoginPage = ({
-  onSignUpClick,
-  onLoginSuccess,
-  navigateToAdminDashBoard,
-}) => {
+
+const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const API_URL = "http://192.168.1.2:5000/api/login/login";
 
   const handleLoginSubmit = async () => {
-    console.log("User clicked login button.");
-    if (!username?.trim() || !password?.trim()) {
-      setErrorMessage("Please enter both username and password.");
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 5000);
-      return;
-    }
+    // Check for suspicious characters
+    const isSuspicious =
+      /[{}<>$;'"\\]/.test(username) || /[{}<>$;'"\\]/.test(password);
 
-    // Username validation: check for spaces or capital letters
-    if (/\s/.test(username) || /[A-Z]/.test(username)) {
-      setErrorMessage(
-        "Please make sure that the username will accept small letters with or without numbers and it has no space"
-      );
+    if (isSuspicious) {
+      console.warn(`[${new Date().toLocaleString()}] Suspicious login attempt.`);
+      setErrorMessage("Invalid credentials.");
       setTimeout(() => {
         setErrorMessage("");
-      }, 5000);
-      return;
-    }
-
-    // Username validation: ensure only lowercase letters and numbers
-    if (!/^[a-z0-9]+$/.test(username)) {
-      setErrorMessage(
-        "Please make sure that the username will accept small letters with or without numbers and it has no space"
-      );
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 5000);
+      }, 10000);
       return;
     }
 
     // Admin credentials check
-    if (username === "admin123" && password === "admin123") {
+    if (username === adminCredentials.username && password === adminCredentials.password) {
       setIsLoading(true);
       try {
         await AsyncStorage.multiSet([
           ["token", "admin-dummy-token"],
-          ["user", JSON.stringify({ username: "admin123", role: "admin" })],
+          ["user", JSON.stringify({ username: adminCredentials.username, role: "admin" })],
         ]);
+        // Pass a callback to onLoginSuccess to handle navigation after state updates
         onLoginSuccess(true, navigateToAdminDashBoard);
       } catch (error) {
         console.error("Admin login error:", error);
@@ -82,7 +68,14 @@ const LoginPage = ({
     setErrorMessage("");
     setIsLoading(true);
 
+
     try {
+      if (!API_URL) {
+        console.warn("API_URL is not defined. Check your .env configuration.");
+        setErrorMessage("API configuration error. Please contact support.");
+        return;
+      }
+
       const response = await axios.post(
         API_URL,
         { username, password },
@@ -91,53 +84,55 @@ const LoginPage = ({
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          timeout: 10000,
+          timeout: 5000, // 5 seconds
         }
       );
 
       if (response.data.success) {
+        console.log(`[${new Date().toLocaleString()}] User ${username} has logged in successfully.`);
         await AsyncStorage.multiSet([
           ["token", response.data.token],
           ["user", JSON.stringify(response.data.user)],
         ]);
         onLoginSuccess(false);
+      } else {
+        setErrorMessage("Login failed. Please check your credentials.");
       }
     } catch (error) {
       let errorMsg = "Login failed. Please try again.";
+
       if (error.response) {
-        errorMsg = error.response.data.message || errorMsg;
-        if (error.response.status === 401) {
-          console.log("Login Error:", error.response.data.message);
-          setErrorMessage(errorMsg);
-        } else if (error.response.status === 403) {
-          Alert.alert("Login Error", error.response.data.message);
-          setErrorMessage("Account banned.");
+        const status = error.response.status;
+        const message = error.response.data?.message || errorMsg;
+
+        if (status === 400) {
+          console.warn("Login Error (400):", message);
+          errorMsg = message;
+        } else if (status === 401) {
+          console.warn("Login Error (401):", message);
+          errorMsg = message;
+        } else if (status === 403) {
+          Alert.alert("Account Banned", message);
+          return;
         } else {
-          setErrorMessage(errorMsg);
+          console.warn("Server Error:", message);
         }
-        setTimeout(() => {
-          setErrorMessage("");
-        }, 10000);
+
+        setErrorMessage(errorMsg);
+        setTimeout(() => setErrorMessage(""), 10000);
+
       } else if (error.request) {
-        errorMsg = "Network error. Please check your internet connection.";
-        if (!API_URL) {
-          console.log(
-            "API_URL is not defined. Please check your configuration."
-          );
-        } else {
-          console.log(
-            "Request made but no response received. Double check the API_URL:",
-            API_URL
-          );
-        }
+        console.warn("No response received. Check if the server is running and .env IP is correct:", API_BASE_URL);
+        setErrorMessage("Connection timeout. Server may be under maintenance.");
       } else {
-        errorMsg = `Error: ${error.message}`;
-        console.log("Error in setting up request:", error.message);
+        console.error("Request setup error:", error.message);
+        setErrorMessage(`Unexpected error: ${error.message}`);
       }
-      setErrorMessage(errorMsg);
+
     } finally {
       setIsLoading(false);
     }
+
   };
 
   return (
@@ -145,7 +140,7 @@ const LoginPage = ({
       <View style={styles.LoginPageContainer}>
         <View style={styles.loginLogo}>
           <Image
-            source={require("../assets/images/Global-images/Logo-removebg.png")}
+            source={require("../assets/images/pawpals.png")}
             style={styles.logoImage}
           />
         </View>
@@ -174,6 +169,7 @@ const LoginPage = ({
               secureTextEntry={!passwordVisible}
               editable={!isLoading}
               placeholderTextColor="#6B4E31"
+              autoCapitalize="none"
             />
             <TouchableOpacity
               onPress={() => setPasswordVisible(!passwordVisible)}
@@ -183,8 +179,8 @@ const LoginPage = ({
               <Image
                 source={
                   passwordVisible
-                    ? require("../assets/images/Global-images/hide-eyes-updated.png")
-                    : require("../assets/images/Global-images/open-eyes-updated.png")
+                    ? require("../assets/images/hide-eyes-updated.png")
+                    : require("../assets/images/open-eyes-updated.png")
                 }
                 style={styles.iconImage}
               />
@@ -192,7 +188,10 @@ const LoginPage = ({
           </View>
 
           <TouchableOpacity
-            style={[styles.loginButton, isLoading && styles.loginButtonLoading]}
+            style={[
+              styles.loginButton,
+              isLoading && styles.loginButtonLoading,
+            ]}
             onPress={handleLoginSubmit}
             disabled={isLoading}
           >
@@ -218,20 +217,20 @@ const LoginPage = ({
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
   },
   LoginPageContainer: {
-    width: "80%",
+    width: '80%',
     maxWidth: 400,
     minHeight: 350,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 15,
     padding: 20,
-    backgroundColor: "#FFF",
-    shadowColor: "#000",
+    backgroundColor: '#FFF',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -243,107 +242,107 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 200,
     height: 200,
-    resizeMode: "contain",
+    resizeMode: 'contain',
     opacity: 0.95,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
   errorMessage: {
-    color: "#FF4D4D",
+    color: '#FF4D4D',
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 20,
-    fontFamily: "Roboto",
+    fontFamily: 'Roboto',
   },
   LoginPage: {
-    width: "100%",
-    alignItems: "center",
+    width: '100%',
+    alignItems: 'center',
   },
   input: {
-    width: "100%",
+    width: '100%',
     padding: 12,
     marginBottom: 15,
     borderRadius: 8,
     fontSize: 16,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: '#F9F9F9',
     borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.1)",
-    color: "#6B4E31",
-    fontFamily: "Roboto",
-    shadowColor: "#000",
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    color: '#6B4E31',
+    fontFamily: 'Roboto',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
   },
   inputWithIcon: {
-    width: "100%",
+    width: '100%',
     padding: 12,
     marginBottom: 15,
     borderRadius: 8,
     fontSize: 16,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: '#F9F9F9',
     borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.1)",
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     paddingRight: 40,
-    color: "#6B4E31",
-    fontFamily: "Roboto",
-    shadowColor: "#000",
+    color: '#6B4E31',
+    fontFamily: 'Roboto',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
   },
   passwordContainer: {
-    width: "100%",
-    position: "relative",
+    width: '100%',
+    position: 'relative',
   },
   passwordIcon: {
-    position: "absolute",
+    position: 'absolute',
     right: 10,
-    top: "50%",
-    transform: [{ translateY: -16 }],
+    top: '50%',
+    transform: [{ translateY: -16 }], // Adjust -12 based on the icon's height
   },
   iconImage: {
     width: 25,
     height: 20,
-    tintColor: "#6B4E31",
+    tintColor: '#6B4E31',
   },
   loginButton: {
-    width: "100%",
+    width: '100%',
     padding: 12,
-    backgroundColor: "#FFD700",
+    backgroundColor: '#FFD700',
     borderRadius: 8,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 3,
   },
   loginButtonLoading: {
-    backgroundColor: "#FFD700",
+    backgroundColor: '#FFD700',
     opacity: 0.7,
   },
   loginButtonText: {
-    color: "#6B4E31",
+    color: '#6B4E31',
     fontSize: 18,
-    fontWeight: "bold",
-    fontFamily: "Roboto",
+    fontWeight: 'bold',
+    fontFamily: 'Roboto',
   },
   loginText: {
     marginTop: 15,
     fontSize: 14,
-    textAlign: "center",
-    color: "#6B4E31",
-    fontFamily: "Roboto",
+    textAlign: 'center',
+    color: '#6B4E31',
+    fontFamily: 'Roboto',
   },
   signUpLinkButton: {
-    color: "#FFD700",
-    textDecoration: "underline",
-    fontFamily: "Roboto",
+    color: '#FFD700',
+    textDecorationLine: 'underline',
+    fontFamily: 'Roboto',
   },
 });
 

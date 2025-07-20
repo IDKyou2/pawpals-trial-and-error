@@ -111,7 +111,7 @@ const SuggestionsForm = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>PETPALS</Text>
+        <Text style={styles.headerText}>Pawpals</Text>
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />

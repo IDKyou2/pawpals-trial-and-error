@@ -250,7 +250,7 @@ const FoundDogForm = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTexts}>PETPALS</Text>
+        <Text style={styles.headerTexts}>Pawpals</Text>
         <TouchableOpacity onPress={toggleMenu} style={styles.headerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />

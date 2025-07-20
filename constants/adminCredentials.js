@@ -1,0 +1,1 @@
+export const adminCredentials = { username: "admin123", password: "admin123" }; 

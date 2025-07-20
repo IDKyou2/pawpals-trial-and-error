@@ -38,7 +38,7 @@ const TermsModal = ({ visible, onClose, onAccept }) => {
 
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>
-              Petpals Registration Terms and Agreements
+              Pawpals Registration Terms and Agreements
             </Text>
           </View>
 
@@ -46,7 +46,7 @@ const TermsModal = ({ visible, onClose, onAccept }) => {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>1. Introduction</Text>
               <Text style={styles.sectionText}>
-                Welcome to Petpals, a mobile application designed to help track
+                Welcome to Pawpals, a mobile application designed to help track
                 lost and found pet dogs using an image recognition algorithm. By
                 signing up, you agree to the following terms and agreements
                 governing our lost and found pet matching service. This
@@ -59,7 +59,7 @@ const TermsModal = ({ visible, onClose, onAccept }) => {
               <Text style={styles.sectionText}>
                 By creating an account, you confirm that you have read,
                 understood, and accepted these terms. If you do not agree to any
-                part of these terms, please refrain from using Petpals. Your
+                part of these terms, please refrain from using Pawpals. Your
                 acceptance is mandatory for using our lost/found pet services.
               </Text>
             </View>
@@ -81,7 +81,7 @@ const TermsModal = ({ visible, onClose, onAccept }) => {
               <Text style={styles.sectionText}>
                 • You are responsible for keeping your login credentials
                 confidential{"\n"}• Notify us immediately if you suspect
-                unauthorized access to your account{"\n"}• Petpals is not liable
+                unauthorized access to your account{"\n"}• Pawpals is not liable
                 for any losses resulting from failure to secure your account
                 {"\n"}• Maintain accurate contact information for lost/found pet
                 notifications
@@ -96,7 +96,7 @@ const TermsModal = ({ visible, onClose, onAccept }) => {
                 • When reporting a lost dog, you must provide recent photos and
                 accurate last-seen location{"\n"}• Found dogs should be reported
                 immediately with clear photos and location details{"\n"}• False
-                reports may result in account suspension{"\n"}• Petpals uses
+                reports may result in account suspension{"\n"}• Pawpals uses
                 image recognition to match lost/found reports but cannot
                 guarantee matches{"\n"}• Users must verify ownership through
                 secondary methods before pet transfer
@@ -117,10 +117,10 @@ const TermsModal = ({ visible, onClose, onAccept }) => {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>7. Liability</Text>
               <Text style={styles.sectionText}>
-                • Petpals is not responsible for the accuracy of user-submitted
+                • Pawpals is not responsible for the accuracy of user-submitted
                 information{"\n"}• We do not guarantee successful pet reunions
                 {"\n"}• Users must verify information independently before
-                transferring animals{"\n"}• Petpals is not liable for any
+                transferring animals{"\n"}• Pawpals is not liable for any
                 disputes between users regarding pet ownership
               </Text>
             </View>
