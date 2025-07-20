@@ -1,0 +1,11 @@
+# for node modules folder
+node_modules/
+
+
+package-lock.json
+
+
+uploads/
+
+
+
