@@ -9,6 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -205,6 +206,7 @@ const FoundDogPageViewInfo = ({
                 )}
               </Text>
             </View>
+
             {userData && userData.contact && (
               <View style={styles.userDetailsContainer}>
                 <Image
@@ -216,6 +218,21 @@ const FoundDogPageViewInfo = ({
                   {userData.contact}
                 </Text>
               </View>
+            )}
+
+            {userData && userData.address ? (
+              <View style={styles.userDetailsContainer}>
+                <Image
+                  source={require("../assets/images/size.png")}
+                  style={styles.bullet}
+                />
+                <Text style={styles.userDetailsText}>
+                  <Text style={styles.label}>Address: </Text>
+                  {userData.address}
+                </Text>
+              </View>
+            ) : (
+              <ActivityIndicator size="small" color="#6B4E31" />
             )}
           </View>
         </View>
@@ -396,6 +413,11 @@ const styles = StyleSheet.create({
     height: 10,
     marginRight: 5,
     tintColor: '#6B4E31',
+  },
+  userDetailsText: {
+    fontSize: 15,
+    color: '#6B4E31',
+    fontFamily: 'Roboto',
   },
   label: {
     fontSize: 15,
