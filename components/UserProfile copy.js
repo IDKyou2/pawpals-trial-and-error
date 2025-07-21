@@ -166,17 +166,24 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
   }
 
   const handleSaveChanges = () => {
+    if (newFullName === userData.fullName && newAddress === userData.address) {
+      //Alert.alert("No changes made", "You haven't changed your full name.");
+      setIsEditing(false);
+      return;
+    }
     if (!newFullName.trim()) {
       Alert.alert("Error", "Full name cannot be empty. Please enter your updated full name.");
     } else if (!newAddress.trim()) {
       Alert.alert("Error", "Your address cannot be empty. Please enter your updated address.");
-    } else {
+    }
+    else {
       setConfirmationModalVisible(true);
       return;
     }
   };
 
   const handleConfirmChange = async () => {
+
     const token = await AsyncStorage.getItem("token");
     if (!token) return;
 
@@ -198,25 +205,8 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
         }
       );
       if (response.status === 200) {
-        /*
-        // Contact number validation
-        const isValidPHNumber = (number) => {
-          const regex = /^09\d{9}$/;
-          return regex.test(number);
-        };
-        */
-
-        /*
-        if (!isValidPHNumber(newContact)) {
-          setError("Please enter a valid contact number.");
-          setConfirmationModalVisible(false);
-          return;
-          //Alert.alert("Error", "Please enter a valid contact number\n(eg. 09XXXXXXXXX).");
-          //setIsEditing(false);
-        } 
-        */
         // Updates UI
-        console.warn("Updated profile: {", "Full name: ", newFullName, ", Address: ", newAddress,"}");
+        console.warn("Updated profile: {", "Full name: ", newFullName, ", Address: ", newAddress, "}");
         //console.warn("Updated profile:", response.data)
         setUserData({ ...userData, contact: newContact, fullName: newFullName, address: newAddress });
         setIsEditing(false);
@@ -232,7 +222,19 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
       console.error("Error updating user profile:", error);
     }
   };
+
+  const noChanges = () => {
+
+    setConfirmationModalVisible(false);
+    //setIsEditing(false);
+
+    setNewFullName(userData?.fullName || "Error fetching full name"); // get user full name
+    setNewAddress(userData?.address || "Error fetching address"); // get user address
+    //setNewContact(userData?.contact || "Error fetching contact");
+  };
+
   const handleCancelChange = () => {
+
     setConfirmationModalVisible(false);
     setIsEditing(false);
 
@@ -245,7 +247,11 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.petText}>PAWPALS</Text>
+        <Image
+          source={require('../assets/images/pawpals.png')}
+          style={styles.logo}
+          resizeMode="cover"
+        />
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -378,7 +384,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
         {/* Inbox Section */}
         <View style={styles.inboxContainer}>
           <Text style={styles.inboxTitle}>Inbox</Text>
-          <ScrollView style={styles.messagesContainer}>
+          <ScrollView style={styles.messagesContainer} contentContainerStyle={{ paddingBottom: 20 }}>
             {messages.length > 0 ? (
               messages.map((message) => (
                 <View key={message.id} style={styles.messageItem}>
@@ -424,7 +430,6 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
         newChatsCount={newChatsCount}
         newPostsCount={newPostsCount}
       />
-
       {/* Confirmation Modal */}
       <Modal
         visible={confirmationModalVisible}
@@ -445,7 +450,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.cancelButton}
-                onPress={handleCancelChange}
+                onPress={noChanges}
               >
                 <Text style={styles.cancelButtonText}>No</Text>
               </TouchableOpacity>
@@ -492,6 +497,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
+  },
+
+  logo: {
+    width: 100,
+    height: "100%",
+    //borderRadius: 100,
   },
   petText: {
     fontSize: 28,
