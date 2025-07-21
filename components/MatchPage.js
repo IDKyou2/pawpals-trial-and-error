@@ -311,6 +311,11 @@ const MatchPage = ({
 
 
   const getMatchMessage = (dog) => {
+    // First check if the dog belongs to current user
+    if (dog.userId?._id.toString() !== currentUserId?.toString()) {
+      return null;
+    }
+
     console.log(
       `Checking matches for dog ${dog.petId}, CurrentUserId: ${currentUserId}`
     );
@@ -328,8 +333,8 @@ const MatchPage = ({
 
     if (matchedPetIds.length <= 2) {
       return `Matches with Pet ID #${matchedPetIds.join(
-        " and #"  
-      )}`;  
+        " and #"
+      )}`;
     } else {
       const shortList = matchedPetIds.slice(0, 2);
       return {
