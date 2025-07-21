@@ -247,7 +247,11 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.petText}>PAWPALS</Text>
+        <Image
+          source={require('../assets/images/pawpals.png')}
+          style={styles.logo}
+          resizeMode="cover"
+        />
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -494,6 +498,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
+  },
+
+  logo: {
+    width: 100,
+    height: "100%",
+    //borderRadius: 100,
   },
   petText: {
     fontSize: 28,
