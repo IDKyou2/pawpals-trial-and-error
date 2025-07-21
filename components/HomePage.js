@@ -1,6 +1,5 @@
+
 import React, { useEffect, useState } from "react";
-
-
 import {
   View,
   Text,
@@ -16,6 +15,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import useChatCount from "./hooks/useChatCount";
 import NotificationModal from "./NotificationModal";
 import Footer from "./Footer";
+
+
+const API_BASE_URL = "http://192.168.1.2:5000";
+// Define API URL constants
+const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
+const profileApi = `${API_BASE_URL}/api/auth/user/profile`;
+
 
 const HomePage = ({
   onBackClick,
@@ -33,12 +39,6 @@ const HomePage = ({
   const [newPostsCount, setNewPostsCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const newChatsCount = useChatCount();
-
-  const API_BASE_URL = "http://192.168.1.2:5000";
-
-  // Define API URL constants
-  const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
-  const profileApi = `${API_BASE_URL}/api/auth/user/profile`;
 
   useEffect(() => {
     const fetchNewPostsCount = async () => {

@@ -12,6 +12,7 @@ if (!fs.existsSync(foundDogsDir)) {
   fs.mkdirSync(foundDogsDir, { recursive: true });
 }
 
+// -------------------------
 router.post("/founddog", async (req, res) => {
   const { breed, size, gender, location, details } = req.body;
   const token = req.headers["authorization"]?.split(" ")[1];
@@ -119,6 +120,7 @@ router.post("/founddog", async (req, res) => {
   }
 });
 
+// ------------------------------------------------------------------------ GET ----------------------------------------------------------------------------------------------------
 
 router.get("/founddog", async (req, res) => {
   try {
@@ -154,6 +156,21 @@ router.get("/all-found-dogs", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+router.get("/reunited-count", async (req, res) => {
+  try {
+    const stats = await Stats.findOne();
+    if (!stats) {
+      return res.status(404).json({ message: "Stats not found" });
+    }
+    res.status(200).json({ reunitedCount: stats.reunitedCount });
+  } catch (error) {
+    console.error("Error fetching reunited count:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 router.delete("/founddog/:id", async (req, res) => {
   try {
@@ -252,18 +269,6 @@ router.put("/mark-reunited/:petId", async (req, res) => {
   }
 });
 
-router.get("/reunited-count", async (req, res) => {
-  try {
-    const stats = await Stats.findOne();
-    if (!stats) {
-      return res.status(404).json({ message: "Stats not found" });
-    }
-    res.status(200).json({ reunitedCount: stats.reunitedCount });
-  } catch (error) {
-    console.error("Error fetching reunited count:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 router.post("/archive-unclaimed", async (req, res) => {
   try {

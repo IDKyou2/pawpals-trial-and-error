@@ -309,7 +309,7 @@ const MatchPage = ({
     }
   };
 
-
+  
   const getMatchMessage = (dog) => {
     console.log(
       `Checking matches for dog ${dog.petId}, CurrentUserId: ${currentUserId}`
@@ -319,7 +319,7 @@ const MatchPage = ({
     const dogMatches = matches.filter(
       (match) => match.petId1 === dog.petId || match.petId2 === dog.petId
     );
-    console.log(`Pet ID #${dog.petId} matches:`, dogMatches);
+    console.log(`Dog ${dog.petId} matches:`, dogMatches);
     if (dogMatches.length === 0) return null;
 
     const matchedPetIds = dogMatches.map((match) =>
@@ -327,13 +327,13 @@ const MatchPage = ({
     );
 
     if (matchedPetIds.length <= 2) {
-      return `Matches with Pet ID #${matchedPetIds.join(
-        " and #"  
-      )}`;  
+      return `Pet ID #${dog.petId} is matched with Pet ID #${matchedPetIds.join(
+        " and #"
+      )}`;
     } else {
       const shortList = matchedPetIds.slice(0, 2);
       return {
-        shortMessage: `Matches with Pet ID #${shortList.join(
+        shortMessage: `Pet ID #${dog.petId} is matched with Pet ID #${shortList.join(
           " and #"
         )} and more...`,
         fullList: matchedPetIds,
@@ -368,7 +368,7 @@ const MatchPage = ({
     const isSameBreed = match.breedSimilarity > 75; // Adjust threshold as needed
     const hasSameColors = match.colorSimilarity > 75;
 
-
+    
     // Matches all, image + breed + colors
     const isHighSimilarity =
       match.imageSimilarityPercentage >= 75 &&

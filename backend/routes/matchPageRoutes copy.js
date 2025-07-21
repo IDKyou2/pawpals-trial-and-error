@@ -96,7 +96,7 @@ router.get("/match-dogs", async (req, res) => {
     if (!token) {
       return res.status(401).json({ message: "No token provided!" });
     }
-
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.userId;
 
@@ -188,7 +188,7 @@ router.get("/match-dogs", async (req, res) => {
 
         if (!isSameUser && isDifferentCategory && isLostDog && isFoundDog && breedSimilarity >= 50) {
           const similarityRaw = compareEmbeddings(emb1, emb2);
-          let imageSimilarityPercentage = Math.min(100, Math.round(similarityRaw * 100));
+          let imageSimilarityPercentage = Math.min(100, Math.round(similarityRaw * 10000) / 100);
 
           if (imageSimilarityPercentage >= 0) {
             //  Build histograms and compare

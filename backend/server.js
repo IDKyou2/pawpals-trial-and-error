@@ -23,7 +23,7 @@ const fs = require("fs");
 const path = require("path");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const http = require("http");
-const { Server } = require("socket.io");
+const { Server } = require("socket.io");  
 const tf = require("@tensorflow/tfjs-node");
 const mobilenet = require("@tensorflow-models/mobilenet");
 
@@ -68,8 +68,8 @@ const io = new Server(server, {
     credentials: true,
   },
 
-  pingTimeout: 60000,
-  pingInterval: 25000,
+  pingTimeout: 30000, //default 60000
+  pingInterval: 10000, //default 25000
   transports: ["websocket", "polling"],
 },
   //console.log("Check allowed origins:", allowedOrigins)

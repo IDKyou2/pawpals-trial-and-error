@@ -202,10 +202,9 @@ const FoundDogFormConfirmation = ({
       console.log("Server Response:", response.data);
 
       if (response.status === 201) {
-        if (response.data.hasMatches && onNavigateToMatchedPage) {
-          onNavigateToMatchedPage();
-        } else if (onNavigateToFoundDogPage) {
+        if (onNavigateToFoundDogPage && onNavigateToMatchedPage) {
           onNavigateToFoundDogPage();
+          onNavigateToMatchedPage();
         } else {
           console.error("Navigation functions are not defined!");
         }
