@@ -21,8 +21,8 @@ const SERVER_URL =
 const PrivateChat = ({
   user,
   onNavigateToChatForum,
-  onNavigateToHome,
-  onNavigateToProfile,
+  //onNavigateToHome,
+  //onNavigateToProfile,
   onLogout,
 }) => {
   const [messages, setMessages] = useState([]);
@@ -32,6 +32,7 @@ const PrivateChat = ({
   const scrollViewRef = useRef(null);
   const socketRef = useRef(null);
   const inputRef = useRef(null);
+
 
   useEffect(() => {
     const fetchUserDataAndMessages = async () => {
@@ -66,6 +67,7 @@ const PrivateChat = ({
           filteredMessages.map((msg) => ({
             id: msg._id,
             text: msg.text,
+            //isSent: msg.from === userResponse.data.fullName,
             isSent: msg.from === userResponse.data.fullName,
             timestamp: new Date(msg.timestamp),
             from: msg.from,
@@ -104,7 +106,8 @@ const PrivateChat = ({
                 updatedMessages[tempIndex] = {
                   id: msg._id,
                   text: msg.text,
-                  isSent: msg.from === userFullName,
+                  //isSent: msg.from === userFullName,
+                  isSent: true, // Hardcode as true since this is OUR sent message
                   timestamp: new Date(msg.timestamp),
                   from: msg.from,
                   profilePic: msg.profilePic,
@@ -113,7 +116,8 @@ const PrivateChat = ({
                 updatedMessages.push({
                   id: msg._id,
                   text: msg.text,
-                  isSent: msg.from === userFullName,
+                  //isSent: msg.from === userFullName,
+                  isSent: msg.from === userResponse.data.fullName,  //use API response
                   timestamp: new Date(msg.timestamp),
                   from: msg.from,
                   profilePic: msg.profilePic,
@@ -139,7 +143,10 @@ const PrivateChat = ({
                 updatedMessages[tempIndex] = {
                   id: msg._id,
                   text: msg.text,
-                  isSent: msg.from === userFullName,
+
+                  //isSent: msg.from === userFullName,
+                  isSent: true, // Hardcode as true since this is OUR sent message
+
                   timestamp: new Date(msg.timestamp),
                   from: msg.from,
                   profilePic: msg.profilePic,
@@ -148,7 +155,10 @@ const PrivateChat = ({
                 updatedMessages.push({
                   id: msg._id,
                   text: msg.text,
-                  isSent: msg.from === userFullName,
+
+                  //isSent: msg.from === userFullName,
+                  isSent: msg.from === userResponse.data.fullName, // Use API response
+
                   timestamp: new Date(msg.timestamp),
                   from: msg.from,
                   profilePic: msg.profilePic,
@@ -235,7 +245,8 @@ const PrivateChat = ({
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBackToForum}>
-          <Text style={styles.backText}>Back to Forum</Text>
+          <Text style={styles.backText}>Go Back</Text>
+
         </TouchableOpacity>
         <Text style={styles.headerText}>{user.fullName}</Text>
       </View>
@@ -265,7 +276,7 @@ const PrivateChat = ({
                   source={
                     message.profilePic
                       ? { uri: `${SERVER_URL}${message.profilePic}` }
-                      : require("../assets/images/Global-images/default-user.png")
+                      : require("../assets/images/default-user.png")
                   }
                   style={styles.userAvatar}
                 />
@@ -290,7 +301,7 @@ const PrivateChat = ({
                   source={
                     message.profilePic
                       ? { uri: `${SERVER_URL}${message.profilePic}` }
-                      : require("../assets/images/Global-images/default-user.png")
+                      : require("../assets/images/default-user.png")
                   }
                   style={styles.userAvatar}
                 />

@@ -16,7 +16,7 @@ const LoadingScreen = ({ onFinishLoading }) => {
       <View style={styles.loadingScreenForm}>
         <View style={styles.loadingScreenLogo}>
           <Image
-            source={require("../assets/images/Global-images/Logo-updated.png")}
+            source={require("../assets/images/pawpals.png")}
             style={styles.logo}
           />
         </View>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   char: {
     fontSize: 40,
     fontWeight: "bold",
-    color: "#fff", 
+    color: "#fff",
     animation: "bounce 1s infinite",
   },
 });

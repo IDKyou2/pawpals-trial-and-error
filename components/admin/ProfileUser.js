@@ -3,14 +3,14 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollVi
 
 const ProfileUserScreen = ({ onNavigateToManageUsersScreen, user }) => {
     const defaultImage = require('../../assets/images/default-user.png');
-    const profileImage = user?.profilePic && user.profilePic !== 'Uploads/'
+    const profileImage = user?.profilePic && user.profilePic !== 'uploads/'
         ? { uri: `http://192.168.1.2:5000/${user.profilePic}` }
         : defaultImage;
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerText}>Pawpals</Text>
+                <Text style={styles.headerText}>PAWPALS</Text>
                 <TouchableOpacity style={styles.hamburgerButton}>
                     <View style={styles.hamburger}>
                         <View style={styles.hamburgerLine} />

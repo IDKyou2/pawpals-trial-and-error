@@ -18,7 +18,7 @@ const MissingDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewLostDogInfo }
                         return {
                             id: dog._id,
                             petId: dog.petId,
-                            image: imageUrl && normalizedImagePath !== '/Uploads/lostDogs/'
+                            image: imageUrl && normalizedImagePath !== '/uploads/lostDogs/'
                                 ? { uri: imageUrl }
                                 : require('../../assets/images/dog-icon.png'),
                             originalImageUrl: imageUrl,
@@ -88,7 +88,7 @@ const MissingDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewLostDogInfo }
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require('../../assets/images/Logo-removebg.png')}
+                         source={require('../../assets/images/pawpals.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

@@ -21,7 +21,7 @@ const ViewReunitedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewReunited
                         return {
                             id: dog._id,
                             petId: dog.petId,
-                            image: imageUrl && normalizedImagePath !== '/Uploads/reunitedDogs/'
+                            image: imageUrl && normalizedImagePath !== '/uploads/reunitedDogs/'
                                 ? { uri: imageUrl }
                                 : require('../../assets/images/dog-icon.png'),
                             originalImageUrl: imageUrl,
@@ -109,7 +109,7 @@ const ViewReunitedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewReunited
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require('../../assets/images/Logo-removebg.png')}
+                        source={require('../../assets/images/pawpals.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

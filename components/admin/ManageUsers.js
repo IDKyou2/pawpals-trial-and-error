@@ -22,7 +22,7 @@ const ManageUsersScreen = ({ onNavigateToAdminDashBoard, onNavigateToProfileUser
                             username: user.username || 'N/A',
                             contact: user.contact || 'N/A',
                             profilePic: normalizedProfilePic,
-                            image: imageUrl && normalizedProfilePic !== 'Uploads/'
+                            image: imageUrl && normalizedProfilePic !== 'uploads/'
                                 ? { uri: imageUrl }
                                 : require('../../assets/images/default-user.png'),
                             originalImageUrl: imageUrl,
@@ -88,7 +88,7 @@ const ManageUsersScreen = ({ onNavigateToAdminDashBoard, onNavigateToProfileUser
                     )
                 );
                 Alert.alert(
-                    "Success",
+                    "Admin access",
                     response.data.message,
                     [{ text: "OK" }]
                 );
@@ -105,7 +105,7 @@ const ManageUsersScreen = ({ onNavigateToAdminDashBoard, onNavigateToProfileUser
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require('../../assets/images/Logo-removebg.png')}
+                        source={require('../../assets/images/pawpals.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

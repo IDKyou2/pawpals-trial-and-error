@@ -1,3 +1,7 @@
+const API_BASE_URL = "http://192.168.1.2:5000";
+const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
+const LOST_DOG_API_URL = `${API_BASE_URL}/api/lostdog`;
+
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -46,8 +50,6 @@ const LostDogFormConfirmation = ({
   );
   const [image, setImage] = useState(formData?.image || null);
   const newChatsCount = useChatCount();
-  const NEW_POSTS_API_URL = "http://192.168.1.2:5000/api/posts/new-posts-count";
-  const LOST_DOG_API_URL = "http://192.168.1.2:5000/api/lostdog";
 
   useEffect(() => {
     const fetchNewPostsCount = async () => {
@@ -196,8 +198,8 @@ const LostDogFormConfirmation = ({
         } else {
           console.error("Navigation functions are not defined!");
         }
-        Alert.alert("Success", "Lost dog reported successfully! Please wait for a moment as we'll check if we have a match for your missing dog.");
-        console.log("Success", "Lost dog reported successfully!");
+        Alert.alert("Report submitted", "Lost dog reported successfully! Please wait for a moment, we will be checking if we have a match for your missing dog.");
+        console.log("Report submitted", "Lost dog reported successfully!");
       }
     } catch (error) {
       console.error("Detailed error reporting lost dog:", {
@@ -211,8 +213,8 @@ const LostDogFormConfirmation = ({
       if (error.code === "ECONNABORTED") {
         errorMessage = "Request timed out. Check your network or server.";
       } else if (error.message.includes("Network Error")) {
-        errorMessage =
-          "Network error. Ensure server is running and accessible. Check if the image upload failed.";
+        errorMessage = "Network error. Check you internet connection";
+        console.log(errorMessage = "Network error. Ensure server is running and accessible. Failed to upload lost dog image.");
       } else if (error.response) {
         errorMessage = error.response.data.message || errorMessage;
       }
@@ -231,7 +233,7 @@ const LostDogFormConfirmation = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Pawpals</Text>
+        <Text style={styles.headerText}>PAWPALS</Text>
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -272,17 +274,6 @@ const LostDogFormConfirmation = ({
         </TouchableOpacity>
       </Modal>
 
-      <View style={styles.navBar}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleTabClick("HomePageLostDog")}
-        />
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleTabClick("HomePageFoundDog")}
-        />
-      </View>
-
       <ScrollView contentContainerStyle={styles.content}>
         <TouchableOpacity
           style={styles.backButton}
@@ -297,7 +288,7 @@ const LostDogFormConfirmation = ({
 
         <View style={styles.profileCard}>
           <View style={styles.profileHeader}>
-            <Text style={styles.profileTitle}>Details</Text>
+            <Text style={styles.profileTitle}>Missing dog</Text>
           </View>
 
 
@@ -373,7 +364,7 @@ const LostDogFormConfirmation = ({
                 style={styles.sizeInput}
                 value={editSize}
                 onChangeText={setEditSize}
-                placeholder="Size (Small, Medium, Huge)"
+                placeholder="Size (Small, Medium, Large)"
                 placeholderTextColor="#A9A9A9"
               />
             ) : (
@@ -589,21 +580,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Roboto',
   },
-  navBar: {
-    backgroundColor: '#FFF',
-    paddingVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  navButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
+
   content: {
     flexGrow: 1,
     paddingVertical: 20,

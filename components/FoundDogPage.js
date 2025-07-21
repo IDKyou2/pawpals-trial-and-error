@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import {
   View,
   Text,
@@ -8,6 +9,7 @@ import {
   Image,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -33,15 +35,19 @@ const FoundDogPage = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const newChatsCount = useChatCount();
+  const [loading, setLoading] = useState(true);
 
   // Define API URL constants
-  const FOUND_DOG_API_URL = "http://192.168.1.2:5000/api/founddog";
-  const NEW_POSTS_API_URL = "http://192.168.1.2:5000/api/posts/new-posts-count";
-  const SOCKET_URL = "http://192.168.1.2:5000";
-  const BASE_URL = "http://192.168.1.2:5000";
+  const API_BASE_URL = "http://192.168.1.2:5000";
+
+  const FOUND_DOG_API_URL = `${API_BASE_URL}/api/founddog`;
+  const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
+  const SOCKET_URL = `${API_BASE_URL}`;
+  const BASE_URL = `${API_BASE_URL}`;
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Show ActivityIndicator while fetching
       try {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
@@ -67,6 +73,8 @@ const FoundDogPage = ({
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // Done loading
       }
     };
 
@@ -101,7 +109,6 @@ const FoundDogPage = ({
   });
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
-
   const handleHomeClick = () => {
     onNavigateToHome?.();
     setMenuOpen(false);
@@ -139,7 +146,11 @@ const FoundDogPage = ({
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Pawpals</Text>
+        <Image
+          source={require('../assets/images/pawpals.png')}
+          style={styles.logo}
+          resizeMode="cover"
+        />
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -187,19 +198,19 @@ const FoundDogPage = ({
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageLostDog")}
           >
-            <Text style={styles.navText}>Lost Dog</Text>
+            <Text style={styles.navText}>View Lost Dogs</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageFoundDog")}
           >
-            <Text style={styles.navTextActive}>Found Dog</Text>
+            <Text style={styles.navTextActive}>View Found Dogs</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageMatched")}
           >
-            <Text style={styles.navText}>Match</Text>
+            <Text style={styles.navText}>Find Match</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
@@ -223,59 +234,64 @@ const FoundDogPage = ({
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.content}>
-        {filteredDogs.length > 0 ? (
-          filteredDogs.map((dog, index) => (
-            <View
-              style={[styles.card, dog.reunited && styles.reunitedCard]}
-              key={dog.petId || index}
-            >
-              <Image
-                source={
-                  dog.imagePath
-                    ? { uri: `${BASE_URL}${dog.imagePath}` }
-                    : require("../assets/images/dog-icon.png")
-                }
-                style={styles.cardImage}
-              />
-              <View style={styles.cardContent}>
-                <Text style={styles.petIdText}>Pet ID: {dog.petId}</Text>
-                <Text style={styles.cardSubtitle}>
-                  {dog.breed}, {dog.gender}
-                </Text>
-                <View style={styles.cardLocation}>
-                  {/* <Image
+        {loading ? (
+          <ActivityIndicator size="large" color="#FFD700" />
+        ) :
+          filteredDogs.length > 0 ? (
+            filteredDogs.map((dog, index) => (
+              <View
+                style={[styles.card, dog.reunited && styles.reunitedCard]}
+                key={dog.petId || index}
+              >
+                <Image
+                  source={
+                    dog.imagePath
+                      ? { uri: `${BASE_URL}${dog.imagePath}` }
+                      : require("../assets/images/dog-icon.png")
+                  }
+                  style={styles.cardImage}
+                />
+                <View style={styles.cardContent}>
+                  <Text style={styles.petIdText}>Pet ID: {dog.petId}</Text>
+                  <Text style={styles.cardSubtitle}>
+                    {dog.breed}, {dog.gender}
+                  </Text>
+                  <View style={styles.cardLocation}>
+                    {/* <Image
                     source={require("../assets/images/location-icon.png")}
                     style={styles.locationIcon}
                   /> */}
-                  <Text style={styles.cardLocationText}>
-                    Found at:{" "}{dog.location}
+                    <Text style={styles.cardLocationText}>
+                      Found at:{" "}{dog.location}
+                    </Text>
+                  </View>
+                  <Text style={styles.cardTimestamp}>
+                    Found on: {new Date(dog.createdAt).toLocaleString()}
                   </Text>
+                  <Text style={styles.cardCategory}>
+                    Category: {dog.category || "Found"}
+                  </Text>
+                  {dog.reunited && (
+                    <Text style={styles.reunitedText}>Status: Reunited</Text>
+                  )}
+                  <TouchableOpacity
+                    style={styles.moreInfoButton}
+                    onPress={() => handleMoreInfoClick(dog)}
+                  >
+                    <Text style={styles.moreInfoText}>More Info</Text>
+                  </TouchableOpacity>
                 </View>
-                <Text style={styles.cardTimestamp}>
-                  Found on: {new Date(dog.createdAt).toLocaleString()}
-                </Text>
-                <Text style={styles.cardCategory}>
-                  Category: {dog.category || "Found"}
-                </Text>
-                {dog.reunited && (
-                  <Text style={styles.reunitedText}>Status: Reunited</Text>
-                )}
-                <TouchableOpacity
-                  style={styles.moreInfoButton}
-                  onPress={() => handleMoreInfoClick(dog)}
-                >
-                  <Text style={styles.moreInfoText}>More Info</Text>
-                </TouchableOpacity>
               </View>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noDataText}>
-            {searchQuery
-              ? "No matching dogs found."
-              : "No found dogs reported yet."}
-          </Text>
-        )}
+            ))
+          ) : (
+            <Text style={styles.noDataText}>
+              {searchQuery
+                ? "No matching dogs found."
+                : "No found dogs reported yet."
+              }
+            </Text>
+          )
+        }
       </ScrollView>
 
       {/* Footer */}
@@ -319,6 +335,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
+  },
+  logo: {
+    width: 100,
+    height: "100%",
   },
   headerText: {
     fontSize: 28,
@@ -381,12 +401,25 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   navButton: {
+    /*
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginRight: 10,
+    */
+    backgroundColor: '#6B4E31',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 25,
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
   },
   navText: {
-    color: '#6B4E31',
+    //color: '#6B4E31',
+    color: '#FFF',
     fontSize: 14,
     fontWeight: '600',
     fontFamily: 'Roboto',

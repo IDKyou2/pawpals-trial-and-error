@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+
+const API_BASE_URL = "http://192.168.1.2:5000";
+const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
+
 import {
   View,
   Text,
@@ -49,7 +53,6 @@ const LostDogForm = ({
 
   const locationiqKey = "pk.0ee70983b8d94b132991d9b76b73102e";
   const debounceTimeout = useRef(null);
-  const NEW_POSTS_API_URL = "http://192.168.1.2:5000/api/posts/new-posts-count";
 
   useEffect(() => {
     const fetchNewPostsCount = async () => {
@@ -152,7 +155,6 @@ const LostDogForm = ({
       }
       if (!dogSize) {
         setSizeError("Please enter dog's size.");
-
       }
       if (!gender) {
         setGenderError("Please select dog's gender.");
@@ -263,7 +265,10 @@ const LostDogForm = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTexts}>Pawpals</Text>
+        <Image
+          source={require("../assets/images/pawpals.png")}
+          style={styles.logo}
+        />
         <TouchableOpacity onPress={toggleMenu} style={styles.headerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -323,7 +328,7 @@ const LostDogForm = ({
                 {selectedImage ? (
                   <Text style={styles.menuTexts}>Selected image:</Text>
                 ) : (
-                  <Text style={styles.menuTexts}>Upload image of your dog</Text>
+                  <Text style={styles.menuTexts}>Upload image of your dog:</Text>
                 )}
                 <Image
                   source={
@@ -336,7 +341,7 @@ const LostDogForm = ({
                   }
                   resizeMode="cover"
                 />
-                <Text style={[styles.textHints, { fontSize: 13, marginTop: 10, }]}>(Best match comes from front or side view)</Text>
+                <Text style={[styles.textHints, { fontSize: 13, marginTop: 10, }]}>(Best match comes from side or front view)</Text>
               </View>
             </TouchableOpacity>
             {imageError ? <Text style={styles.errorText}>{imageError}</Text> : null}
@@ -365,17 +370,45 @@ const LostDogForm = ({
             }}
           />
           {breedError ? <Text style={styles.errorText}>{breedError}</Text> : null}
-
-          <Text style={styles.label}>Size: <Text style={styles.textHints}>(Small, Medium, Huge)</Text></Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter dog's size"
-            value={dogSize}
-            onChangeText={(text) => {
-              setDogSize(text);
-              setSizeError("");
-            }}
-          />
+          <Text style={styles.label}>Size: <Text style={styles.textHints}>(Small, Medium, Large)</Text></Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.inputButton,
+                dogSize === "Small" && styles.inputButtonSelected,
+              ]}
+              onPress={() => {
+                setDogSize("Small");
+                setSizeError("");
+              }}
+            >
+              <Text style={styles.genderText}>S</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.inputButton,
+                dogSize === "Medium" && styles.inputButtonSelected,
+              ]}
+              onPress={() => {
+                setDogSize("Medium");
+                setSizeError("");
+              }}
+            >
+              <Text style={styles.genderText}>M</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.inputButton,
+                dogSize === "Large" && styles.inputButtonSelected,
+              ]}
+              onPress={() => {
+                setDogSize("Large");
+                setSizeError("");
+              }}
+            >
+              <Text style={styles.genderText}>L</Text>
+            </TouchableOpacity>
+          </View>
           {sizeError ? <Text style={styles.errorText}>{sizeError}</Text> : null}
           <Text style={styles.label}>Location:{" "}<Text style={styles.textHints}>(Last seen)</Text></Text>
           <View style={styles.inputContainer}>
@@ -399,11 +432,11 @@ const LostDogForm = ({
           {locationError ? <Text style={styles.errorText}>{locationError}</Text> : null}
 
           <Text style={styles.label}>Gender:</Text>
-          <View style={styles.genderContainer}>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[
-                styles.genderButton,
-                gender === "Male" && styles.genderButtonSelected,
+                styles.inputButton,
+                gender === "Male" && styles.inputButtonSelected,
               ]}
               onPress={() => {
                 setGender("Male");
@@ -418,8 +451,8 @@ const LostDogForm = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={[
-                styles.genderButton,
-                gender === "Female" && styles.genderButtonSelected,
+                styles.inputButton,
+                gender === "Female" && styles.inputButtonSelected,
               ]}
               onPress={() => {
                 setGender("Female");
@@ -522,6 +555,10 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
   },
+  logo: {
+    width: 100,
+    height: "100%",
+  },
   headerTexts: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -614,6 +651,7 @@ const styles = StyleSheet.create({
     borderColor: '#FFD700',
     borderRadius: 10,
     //marginBottom: 5,
+    //objectFit: 'contain',
   },
   selectedImageIcon: {
     width: 200,
@@ -662,14 +700,15 @@ const styles = StyleSheet.create({
     color: '#888',
     fontFamily: 'Roboto',
   },
-  genderContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     marginBottom: 10,
     justifyContent: 'space-between',
+    padding: 8,
   },
-  genderButton: {
+  inputButton: {
     flex: 1,
-    padding: 12,
+    padding: 10,
     borderWidth: 2,
     borderColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 10,
@@ -684,7 +723,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  genderButtonSelected: {
+  inputButtonSelected: {
     borderColor: '#FFD700',
     backgroundColor: '#FFF',
   },

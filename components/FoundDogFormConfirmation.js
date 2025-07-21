@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import {
   View,
   Text,
@@ -46,9 +47,10 @@ const FoundDogFormConfirmation = ({
   );
   const [image, setImage] = useState(formData?.image || null);
   const newChatsCount = useChatCount();
+  const BASE_URL = "http://192.168.1.2:5000";
 
-  const NEW_POSTS_API_URL = "http://192.168.1.2:5000/api/posts/new-posts-count";
-  const FOUND_DOG_API_URL = "http://192.168.1.2:5000/api/founddog";
+  const NEW_POSTS_API_URL = `${BASE_URL}/api/posts/new-posts-count`;
+  const FOUND_DOG_API_URL = `${BASE_URL}/api/founddog`;
 
   useEffect(() => {
     const fetchNewPostsCount = async () => {
@@ -206,8 +208,8 @@ const FoundDogFormConfirmation = ({
         } else {
           console.error("Navigation functions are not defined!");
         }
-        Alert.alert("Success", "Found dog reported successfully! Thank you for helping and giving them a chance to reunite with their owners.");
-        console.log("Success", "Found dog reported successfully.");
+        Alert.alert("Report submitted", "Found dog reported successfully. Thank you for helping.");
+        console.warn("Report submitted", "Found dog reported successfully.");
       }
     } catch (error) {
       console.error("Detailed error reporting found dog:", {
@@ -221,8 +223,8 @@ const FoundDogFormConfirmation = ({
       if (error.code === "ECONNABORTED") {
         errorMessage = "Request timed out. Check your network or server.";
       } else if (error.message.includes("Network Error")) {
-        errorMessage =
-          "Network error. Ensure server is running and accessible. Check if the image upload failed.";
+        errorMessage = "Network error. Check you internet connection";
+        console.log(errorMessage = "Network error. Ensure server is running and accessible. Failed to upload found dog image.");
       } else if (error.response) {
         errorMessage = error.response.data.message || errorMessage;
       }
@@ -241,7 +243,7 @@ const FoundDogFormConfirmation = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Pawpals</Text>
+        <Text style={styles.headerText}>PAWPALS</Text>
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -282,17 +284,6 @@ const FoundDogFormConfirmation = ({
         </TouchableOpacity>
       </Modal>
 
-      <View style={styles.navBar}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleTabClick("HomePageLostDog")}
-        />
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleTabClick("HomePageFoundDog")}
-        />
-      </View>
-
       <ScrollView contentContainerStyle={styles.content}>
         <TouchableOpacity
           style={styles.backButton}
@@ -302,7 +293,7 @@ const FoundDogFormConfirmation = ({
             source={require("../assets/images/back-arrow.png")}
             style={styles.backArrow}
           />
-          <Text style={styles.backText}>Back to Form</Text>
+          <Text style={styles.backText}>Go back to Form</Text>
         </TouchableOpacity>
 
         <View style={styles.profileCard}>
@@ -601,21 +592,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Roboto',
   },
-  navBar: {
-    backgroundColor: '#FFF',
-    paddingVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  navButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
+
   content: {
     flexGrow: 1,
     paddingVertical: 20,

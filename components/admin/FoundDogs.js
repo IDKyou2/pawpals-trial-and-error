@@ -27,7 +27,7 @@ const FoundDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewFoundDogInfo })
                             size: dog.size,
                             additionalDetails: dog.details,
                             userId: dog.userId,
-                            image: imageUrl && normalizedImagePath !== '/Uploads/foundDogs/'
+                            image: imageUrl && normalizedImagePath !== '/uploads/foundDogs/'
                                 ? { uri: imageUrl }
                                 : require('../../assets/images/dog-icon.png'),
                             originalImageUrl: imageUrl,
@@ -75,7 +75,7 @@ const FoundDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewFoundDogInfo })
                         try {
                             await axios.delete(`${API_BASE_URL}founddog/${dogId}`);
                             setDogs(prevDogs => prevDogs.filter(dog => dog.id !== dogId));
-                            Alert.alert("Success", "Found dog deleted successfully!");
+                            Alert.alert("Post deleted", "Found dog deleted successfully.");
                         } catch (error) {
                             console.error("Error deleting dog:", error.message);
                             Alert.alert("Error", "Failed to delete dog. Please try again.");
@@ -93,7 +93,7 @@ const FoundDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewFoundDogInfo })
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require('../../assets/images/Logo-removebg.png')}
+                        source={require('../../assets/images/pawpals.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

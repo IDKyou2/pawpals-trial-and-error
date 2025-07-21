@@ -223,8 +223,8 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
     }
   };
 
-    const noChanges = () => {
-    
+  const noChanges = () => {
+
     setConfirmationModalVisible(false);
     //setIsEditing(false);
 
@@ -234,7 +234,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
   };
 
   const handleCancelChange = () => {
-    
+
     setConfirmationModalVisible(false);
     setIsEditing(false);
 

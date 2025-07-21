@@ -13,7 +13,7 @@ const ToViewReunitedDogInfoScreen = ({ onNavigateBack, dog }) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.headerText}>Pawpals</Text>
+                <Text style={styles.headerText}>PAWPALS</Text>
                 <TouchableOpacity style={styles.hamburgerButton}>
                     <View style={styles.hamburger}>
                         <View style={styles.hamburgerLine} />

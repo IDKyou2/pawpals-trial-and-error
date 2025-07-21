@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import io from "socket.io-client";
@@ -40,6 +41,7 @@ const SuggestionsPage = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
   const newChatsCount = useChatCount();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNewPostsCount = async () => {
@@ -53,6 +55,7 @@ const SuggestionsPage = ({
     };
 
     const fetchSuggestions = async () => {
+      setLoading(true); // Show ActivityIndicator while fetching
       try {
         const token = await AsyncStorage.getItem("token");
         const response = await axios.get(SUGGESTIONS_API_URL, {
@@ -61,6 +64,8 @@ const SuggestionsPage = ({
         setSuggestions(response.data);
       } catch (error) {
         console.error("Error fetching suggestions:", error);
+      } finally {
+        setLoading(false); // Done loading
       }
     };
 
@@ -114,12 +119,12 @@ const SuggestionsPage = ({
   const closeModal = () => setIsModalOpen(false);
   const handleSubmitSuggestion = async () => {
     if (!suggestionText.trim()) {
-      setSuccessMessage("Please enter a suggestion.");
+      setSuccessMessage("Please enter your suggestion");
       setTimeout(() => setSuccessMessage(null), 3000);
       return;
     }
     if (rating === 0) {
-      setSuccessMessage("Please select a rating.");
+      setSuccessMessage("Please rate before submitting.");
       setTimeout(() => setSuccessMessage(null), 3000);
       return;
     }
@@ -165,7 +170,7 @@ const SuggestionsPage = ({
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Pawpals</Text>
+        <Text style={styles.headerText}>PAWPALS</Text>
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -208,27 +213,27 @@ const SuggestionsPage = ({
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <TouchableOpacity
             style={styles.navButton}
+            onPress={() => handleTabClick("SuggestionsPage")}
+          >
+            <Text style={styles.navTextActive}>View Suggestions</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
             onPress={() => handleTabClick("HomePageLostDog")}
           >
-            <Text style={styles.navText}>Lost Dog</Text>
+            <Text style={styles.navText}>View Lost Dogs</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageFoundDog")}
           >
-            <Text style={styles.navText}>Found Dog</Text>
+            <Text style={styles.navText}>View Found Dogs</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageMatched")}
           >
-            <Text style={styles.navText}>Match</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.navButton}
-            onPress={() => handleTabClick("HomePageSuggestions")}
-          >
-            <Text style={styles.navTextActive}>View Suggestions</Text>
+            <Text style={styles.navText}>Find Match</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -297,45 +302,50 @@ const SuggestionsPage = ({
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.content}>
-        {suggestions.length === 0 ? (
-          <Text style={styles.noDataText}>No posted suggestions yet.</Text>
-        ) : (
-          suggestions.map((suggestion, index) => {
-            const createdAt = new Date(suggestion.createdAt);
-            const formattedDate = createdAt.toLocaleDateString();
-            const formattedTime = createdAt.toLocaleTimeString();
+        {loading ? (
+          <ActivityIndicator size="large" color="#FFD700" />
+        ) :
 
-            return (
-              <View key={index} style={styles.suggestionCard}>
-                <Text style={styles.suggestionUser}>
-                  Suggested by:{" "}
-                  <Text style={styles.suggestionUserName}>
-                    {suggestion.userId?.fullName || "Anonymous"}
-                  </Text>
-                </Text>
-                <Text style={styles.suggestionText}>
-                  {suggestion.suggestion}
-                </Text>
-                <View style={styles.ratingContainer}>
-                  {[1, 2, 3, 4, 5].map((starIndex) => (
-                    <Text
-                      key={starIndex}
-                      style={[
-                        styles.star,
-                        starIndex <= suggestion.rating && styles.starSelected,
-                      ]}
-                    >
-                      ★
+          suggestions.length === 0 ? (
+            <Text style={styles.noDataText}>No posted suggestions yet.</Text>
+          ) : (
+            suggestions.map((suggestion, index) => {
+              const createdAt = new Date(suggestion.createdAt);
+              const formattedDate = createdAt.toLocaleDateString();
+              const formattedTime = createdAt.toLocaleTimeString();
+
+              return (
+                <View key={index} style={styles.suggestionCard}>
+                  <Text style={styles.suggestionUser}>
+                    Suggested by:{" "}
+                    <Text style={styles.suggestionUserName}>
+                      {suggestion.userId?.fullName || "Anonymous"}
                     </Text>
-                  ))}
+                  </Text>
+                  <Text style={styles.suggestionText}>
+                    {suggestion.suggestion}
+                  </Text>
+                  <View style={styles.ratingContainer}>
+                    {[1, 2, 3, 4, 5].map((starIndex) => (
+                      <Text
+                        key={starIndex}
+                        style={[
+                          styles.star,
+                          starIndex <= suggestion.rating && styles.starSelected,
+                        ]}
+                      >
+                        ★
+                      </Text>
+                    ))}
+                  </View>
+                  <Text style={styles.suggestionDate}>
+                    Posted on: {formattedDate} at {formattedTime}
+                  </Text>
                 </View>
-                <Text style={styles.suggestionDate}>
-                  Posted on: {formattedDate} at {formattedTime}
-                </Text>
-              </View>
-            );
-          })
-        )}
+              );
+            })
+          )
+        }
       </ScrollView>
 
       {/* Footer */}
@@ -432,12 +442,24 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   navButton: {
+    /*
     paddingHorizontal: 15,
     paddingVertical: 10,
     marginRight: 10,
+    */
+    backgroundColor: '#6B4E31',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 25,
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
   },
   navText: {
-    color: '#6B4E31',
+    color: '#FFF',
     fontSize: 14,
     fontWeight: '600',
     fontFamily: 'Roboto',

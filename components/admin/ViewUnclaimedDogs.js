@@ -18,7 +18,7 @@ const ViewUnclaimedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewUnclaim
                         return {
                             id: dog._id,
                             petId: dog.petId,
-                            image: imageUrl && normalizedImagePath !== '/Uploads/unclaimedDogs/'
+                            image: imageUrl && normalizedImagePath !== '/uploads/unclaimedDogs/'
                                 ? { uri: imageUrl }
                                 : require('../../assets/images/dog-icon.png'),
                             originalImageUrl: imageUrl,
@@ -87,7 +87,7 @@ const ViewUnclaimedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewUnclaim
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
                     <Image
-                        source={require('../../assets/images/Logo-removebg.png')}
+                      source={require('../../assets/images/pawpals.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

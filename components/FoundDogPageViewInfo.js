@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   View,
   Text,
@@ -12,8 +13,10 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const API_BASE_URL = "http://192.168.1.2:5000";
+
 // Define API URL constants
-const BASE_URL = "http://192.168.1.2:5000";
+const BASE_URL = `${API_BASE_URL}`;
 
 const FoundDogPageViewInfo = ({
   dog,
@@ -21,7 +24,6 @@ const FoundDogPageViewInfo = ({
   onNavigateToProfile,
   onNavigateToFoundDogPage,
   onLogout,
-  onNavigateToChatForum,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -74,7 +76,7 @@ const FoundDogPageViewInfo = ({
   return (
     <SafeAreaView style={styles.mainWrapper}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Pawpals</Text>
+        <Text style={styles.headerText}>PAWPALS</Text>
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />

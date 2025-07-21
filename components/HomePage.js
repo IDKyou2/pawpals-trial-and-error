@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+
+
 import {
   View,
   Text,
@@ -32,9 +34,11 @@ const HomePage = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const newChatsCount = useChatCount();
 
+  const API_BASE_URL = "http://192.168.1.2:5000";
+
   // Define API URL constants
-  const NEW_POSTS_API_URL = "http://192.168.1.2:5000/api/posts/new-posts-count";
-  const profileApi = "http://192.168.1.2:5000/api/auth/user/profile";
+  const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
+  const profileApi = `${API_BASE_URL}/api/auth/user/profile`;
 
   useEffect(() => {
     const fetchNewPostsCount = async () => {
@@ -71,7 +75,7 @@ const HomePage = ({
         const data = await response.json();
         if (response.ok) {
           setUserData({
-            fullName: data.fullName || "Juan Dela Cruz",
+            fullName: data.fullName || "User",
             profilePic: data.profilePic || "/default-avatar.png",
           });
         } else {
@@ -112,7 +116,11 @@ const HomePage = ({
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Pawpals</Text>
+        <Image
+          source={require('../assets/images/pawpals.png')}
+          style={styles.logo}
+          resizeMode="cover"
+        />
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -157,19 +165,19 @@ const HomePage = ({
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageLostDog")}
           >
-            <Text style={styles.navText}>Lost Dog</Text>
+            <Text style={styles.navText}>View Lost Dogs</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageFoundDog")}
           >
-            <Text style={styles.navText}>Found Dog</Text>
+            <Text style={styles.navText}>View Found Dogs</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => handleTabClick("HomePageMatched")}
           >
-            <Text style={styles.navText}>Match</Text>
+            <Text style={styles.navText}>Find match</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.navButton}
@@ -189,7 +197,7 @@ const HomePage = ({
                 ? {
                   uri: `${profileApi.replace("/api/auth/user/profile", "")}${userData.profilePic}`,
                 }
-                : require("../assets/images/Global-images/default-user-profile.png")
+                : require("../assets/images/default-user-profile.png")
             }
             style={styles.profileImage}
           />
@@ -248,6 +256,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 6,
     elevation: 8,
+  },
+  logo: {
+    width: 100,
+    height: "100%",
+    //borderRadius: 100,
   },
   headerText: {
     fontSize: 28,

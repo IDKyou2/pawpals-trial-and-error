@@ -1,11 +1,5 @@
 import React, { useState } from "react";
 
-//import { API_BASE_URL } from '@env'; // import .env file variables
-const API_BASE_URL = "http://192.168.1.2:5000";
-const API_URL = `${API_BASE_URL}/api/login/login`; // Login API endpoint
-
-import { adminCredentials } from "../constants/adminCredentials"; // Admin details
-
 import {
   View,
   Text,
@@ -18,6 +12,10 @@ import {
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { adminCredentials } from "../constants/adminCredentials"; // Admin details
+
+const API_BASE_URL = "http://192.168.1.2:5000";
+const API_URL = `${API_BASE_URL}/api/login/login`; // Login API endpoint
 
 
 const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) => {

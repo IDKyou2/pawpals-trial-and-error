@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+
 import {
   View,
   Text,
@@ -15,26 +15,42 @@ import {
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import React, { useState, useEffect } from "react";
+
+import { adminCredentials } from "../constants/adminCredentials"; // Admin details
+
+const API_BASE_URL = "http://192.168.1.2:5000";
+const API_URL = `${API_BASE_URL}/api/register/register`;
 
 const RegisterForm = ({ onLoginClick }) => {
   const navigation = useNavigation();
   const [profilePic, setProfilePic] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [username, setUsername] = useState("");
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [address, setAddress] = useState(""); // new
-
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // For Android emulator use 103.106.67.162, for iOS simulator use 192.168.1.2
-  const API_URL = "http://192.168.1.2:5000/api/register/register";
+  const [username, setUsername] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+
+
+  const checkUsernameAvailability = async (username) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/api/register/check-username`, { username });
+      return res.data.exists;
+    } catch (err) {
+      console.error("Username check failed:", err);
+      return false; // Assume available if error
+    }
+  };
 
   const handleImageUpload = async () => {
     try {
@@ -57,7 +73,8 @@ const RegisterForm = ({ onLoginClick }) => {
 
       if (!result.canceled && result.assets) {
         setProfilePic(result.assets[0]);
-        console.log("User has selected an image:", result.assets[0].uri);
+        //console.log("User has selected an image:", result.assets[0].uri);
+        console.log("User has selected an image.");
       } else {
         console.log("User cancelled image upload.");
       }
@@ -72,9 +89,9 @@ const RegisterForm = ({ onLoginClick }) => {
     setSuccess(null);
     setLoading(true);
 
-    console.log("User clicked register now button.");
+
     if (password !== confirmPassword) {
-      setError("Passwords don't match!");
+      setError("Password and confirm password don't match.");
       setLoading(false);
       return;
     }
@@ -90,13 +107,13 @@ const RegisterForm = ({ onLoginClick }) => {
       return regex.test(number);
     };
 
-
     // Basic validation
     if (
       !username ||
       !fullName ||
       !email ||
       !contact ||
+      !address ||
       !password ||
       !confirmPassword
     ) {
@@ -116,7 +133,7 @@ const RegisterForm = ({ onLoginClick }) => {
       return;
     }
     if (!profilePic) {
-      setError("Profile picture is required!");
+      setError("Profile picture is required");
       setLoading(false);
       return;
     }
@@ -142,7 +159,7 @@ const RegisterForm = ({ onLoginClick }) => {
 
       // Log FormData contents for debugging
       for (let [key, value] of formData) {
-        console.log(`FormData: ${key} =`, value);
+        //console.log(`Form Data: ${key} =`, value);  //For testing only
       }
 
       const response = await axios.post(API_URL, formData, {
@@ -161,10 +178,41 @@ const RegisterForm = ({ onLoginClick }) => {
       setError(
         err.response?.data?.message || err.message || "Registration failed"
       );
+
     } finally {
       setLoading(false);
     }
   };
+
+  // --------------------------------------------- For username ---------------------------------- //
+  useEffect(() => {
+    if (username.trim().length === 0) {
+      setUsernameError("");
+      return;
+    } else {
+      setUsernameError(""); // Clear error if not empty
+    }
+
+    const checkUsername = async () => {
+      try {
+        const isTaken = await checkUsernameAvailability(username);
+        if (isTaken) {
+          setUsernameError("Username already taken.");
+        } else if (username === adminCredentials.username) {
+          setUsernameError("Username already taken.");
+        } else {
+          setUsernameError(""); // Clear error
+        }
+      } catch (error) {
+        console.log("Username check failed:", error);
+        setUsernameError("Error checking username.");
+      }
+    };
+
+    checkUsername(); // Call the async function
+
+  }, [username]);
+
 
   return (
     <KeyboardAvoidingView
@@ -178,7 +226,7 @@ const RegisterForm = ({ onLoginClick }) => {
         <View style={styles.registerFormContainer}>
           <View style={styles.registerLogo}>
             <Image
-              source={require("../assets/images/Global-images/Logo-updated.png")}
+              source={require("../assets/images/pawpals.png")}
               style={styles.logoImage}
             />
           </View>
@@ -191,17 +239,22 @@ const RegisterForm = ({ onLoginClick }) => {
               source={
                 profilePic
                   ? { uri: profilePic.uri }
-                  : require("../assets/images/Global-images/default-user.png")
+                  : require("../assets/images/default-user.png")
               }
               style={styles.profilePic}
             />
             <Image
-              source={require("../assets/images/Global-images/default-image-upload.png")}
+              source={require("../assets/images/default-image-upload.png")}
               style={styles.uploadIcon}
             />
           </TouchableOpacity>
 
           <View style={styles.registerForm}>
+            {usernameError ? (
+              <Text style={{ color: "red" }}>{usernameError}</Text>
+            ) : username.length >= 3 ? (
+              <Text style={{ color: "green" }}>Username is available.</Text>
+            ) : null}
             <TextInput
               style={styles.input}
               placeholder="Username"
@@ -251,6 +304,7 @@ const RegisterForm = ({ onLoginClick }) => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!passwordVisible}
+                autoCapitalize="none"
               />
               <TouchableOpacity
                 style={styles.passwordIcon}
@@ -259,8 +313,8 @@ const RegisterForm = ({ onLoginClick }) => {
                 <Image
                   source={
                     passwordVisible
-                      ? require("../assets/images/Global-images/hide-eyes-updated.png")
-                      : require("../assets/images/Global-images/open-eyes-updated.png")
+                      ? require("../assets/images/hide-eyes-updated.png")
+                      : require("../assets/images/open-eyes-updated.png")
                   }
                   style={styles.iconImage}
                 />
@@ -274,6 +328,7 @@ const RegisterForm = ({ onLoginClick }) => {
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={!confirmPasswordVisible}
+                autoCapitalize="none"
               />
               <TouchableOpacity
                 style={styles.passwordIcon}
@@ -284,8 +339,8 @@ const RegisterForm = ({ onLoginClick }) => {
                 <Image
                   source={
                     confirmPasswordVisible
-                      ? require("../assets/images/Global-images/hide-eyes-updated.png")
-                      : require("../assets/images/Global-images/open-eyes-updated.png")
+                      ? require("../assets/images/hide-eyes-updated.png")
+                      : require("../assets/images/open-eyes-updated.png")
                   }
                   style={styles.iconImage}
                 />
