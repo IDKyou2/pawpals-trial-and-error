@@ -198,7 +198,7 @@ const LostDogFormConfirmation = ({
         } else {
           console.error("Navigation functions are not defined!");
         }
-        Alert.alert("Report submitted", "Lost dog reported successfully! Please wait for a moment, we will be checking if we have a match for your missing dog.");
+        Alert.alert("Report submitted", "Please wait for a moment, we will be checking if we have a match for your missing dog.");
         console.log("Report submitted", "Lost dog reported successfully!");
       }
     } catch (error) {
