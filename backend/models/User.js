@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   profilePic: { type: String, default: "" },
   banned: { type: Boolean, default: false },
   address: { type: String, required: true }, // newly added
+  // 👇 New field
+  role: { type: String, default: "user" },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
