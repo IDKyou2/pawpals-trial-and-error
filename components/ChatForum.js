@@ -50,6 +50,7 @@ const ChatForum = ({
   const resetChatsCount = () => {
     setNewChatsCount(0); // ✅ simple reset
   };
+  
   useEffect(() => {
     const fetchUserDataAndMessages = async () => {
       try {
@@ -147,7 +148,7 @@ const ChatForum = ({
     };
 
     fetchUserDataAndMessages();
-
+    
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();

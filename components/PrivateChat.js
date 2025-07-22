@@ -27,7 +27,9 @@ const PrivateChat = ({
 }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+
   const [userFullName, setUserFullName] = useState("");
+  const [userUsername, setUserUsername] = useState("");
   const [userProfilePic, setUserProfilePic] = useState("");
   const scrollViewRef = useRef(null);
   const socketRef = useRef(null);
@@ -46,8 +48,9 @@ const PrivateChat = ({
 
         // get user details
         const userResponse = await axios.get(`${SERVER_URL}/api/auth/user/profile`, { headers: { Authorization: `Bearer ${token}` }, });
-        
-        setUserFullName(userResponse.data.fullName || "Unknown User");
+
+        setUserFullName(userResponse.data.fullName || "Full name not found");
+        setUserUsername(userResponse.data.username || "Username not found");
         setUserProfilePic(userResponse.data.profilePic || "");
 
         // fetch api 
