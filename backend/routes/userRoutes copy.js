@@ -81,13 +81,8 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
 
     console.log("Updating with:", req.body);
 
-    // Prevent updating username (if it exists in the request)
-    if (req.body.username) {
-      return res.status(400).json({ message: "Username cannot be changed" });
-    }
-
     const updateData = {};
-
+    
     if (fullName) updateData.fullName = fullName;
     if (contact) updateData.contact = contact;
     if (address) updateData.address = address;
@@ -98,9 +93,10 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ message: "No fields provided to update" });
     }
-
     // updated user details
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true, select: '-password' }); // Exclude password from the returned data
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    });
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -109,7 +105,6 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
     res.json({
       message: "Profile updated successfully",
       user: {
-        username: updatedUser.username, // Include username in response
         fullName: updatedUser.fullName,
         contact: updatedUser.contact,
         profilePic: updatedUser.profilePic
@@ -119,13 +114,9 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating user profile:", error);
-    if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({ message: "Invalid token" });
-    }
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 router.get("/user/profile", async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -137,16 +128,13 @@ router.get("/user/profile", async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.userId;
-
-    const userData = await User.findById(userId).select('-password'); // Exclude password
-    //const userData = await User.findById(userId);
+    const userData = await User.findById(userId);
 
     if (!userData) {
       return res.status(404).json({ message: "User not found" });
     }
     res.json({
-      _id: userData._id, // user ID added
-      username: userData.username, // Ensure username is included
+      
       fullName: userData.fullName,
       contact: userData.contact,
       email: userData.email,
@@ -157,13 +145,9 @@ router.get("/user/profile", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching user profile:", error);
-    if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({ message: "Invalid token" });
-    }
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;

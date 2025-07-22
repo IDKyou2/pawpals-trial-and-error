@@ -6,7 +6,7 @@ const privateChatSchema = new mongoose.Schema(
     to: { type: String, required: true },
     text: { type: String, required: true },
     timestamp: { type: String, required: true },
-    read: { type: Boolean, default: false },
+    read: { type: Boolean, default: false },  
   },
   { timestamps: true }
 );
