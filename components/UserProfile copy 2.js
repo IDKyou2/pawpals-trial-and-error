@@ -391,15 +391,12 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
             {messages.length > 0 ? (
               console.log(messages),
               [...messages]
-                .filter(
-                  (message) =>
-                    message.to === userData?.fullName ||
-                    message.from === userData?.fullName
-                )
+                .filter(message => message.to === userData?.fullName) // ONLY show received messages
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .map((message) => {
                   const isUnread = !message.read && message.to === userData?.fullName;
                   const isCurrentUser = message.from === userData?.fullName;
+
                   return (
                     <TouchableOpacity
                       key={message.id}
