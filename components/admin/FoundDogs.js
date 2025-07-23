@@ -62,12 +62,8 @@ const FoundDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewFoundDogInfo })
     const handleRemoveDog = (dogId) => {
         Alert.alert(
             "Confirm Deletion",
-            "Are you sure you want to delete this found dog?",
+            "Are you sure you want to delete this dog data?",
             [
-                {
-                    text: "No",
-                    style: "cancel",
-                },
                 {
                     text: "Yes",
                     style: "destructive",
@@ -81,6 +77,10 @@ const FoundDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewFoundDogInfo })
                             Alert.alert("Error", "Failed to delete dog. Please try again.");
                         }
                     },
+                },
+                {
+                    text: "No",
+                    style: "cancel",
                 },
             ],
             { cancelable: true }

@@ -211,7 +211,7 @@ router.put("/user/:userId/ban", async (req, res) => {
     await user.save();
 
     res.status(200).json({
-      message: user.banned ? "User has been banned" : "User has been unbanned",
+      message: user.banned ? "User has been banned" : "User has been unblocked",
       banned: user.banned,
     });
   } catch (error) {

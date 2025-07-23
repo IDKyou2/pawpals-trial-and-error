@@ -165,7 +165,10 @@ const ViewReunitedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewReunited
                         <View style={styles.deleteModalButtons}>
                             <TouchableOpacity
                                 style={[styles.deleteModalButton, styles.yesButton]}
-                                onPress={() => handleRemoveDog(dogToDelete)}
+                                onPress={() => {
+                                    console.log("Dog to delete:", dogToDelete);
+                                    handleRemoveDog(dogToDelete)
+                                }}
                             >
                                 <Text style={styles.deleteModalButtonText}>YES</Text>
                             </TouchableOpacity>
