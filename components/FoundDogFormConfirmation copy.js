@@ -48,7 +48,7 @@ const FoundDogFormConfirmation = ({
   const [image, setImage] = useState(formData?.image || null);
   const newChatsCount = useChatCount();
 
-  const BASE_URL = "http://192.168.1.2:5000";
+  const BASE_URL = "http://192.168.1.19:5000";
   const NEW_POSTS_API_URL = `${BASE_URL}/api/posts/new-posts-count`;
   const FOUND_DOG_API_URL = `${BASE_URL}/api/founddog`;
 

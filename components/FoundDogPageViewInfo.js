@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "http://192.168.1.2:5000";
+const API_BASE_URL = "http://192.168.1.19:5000";
 
 // Define API URL constants
 const BASE_URL = `${API_BASE_URL}`;

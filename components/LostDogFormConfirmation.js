@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://192.168.1.2:5000";
+const API_BASE_URL = "http://192.168.1.19:5000";
 const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
 const LOST_DOG_API_URL = `${API_BASE_URL}/api/lostdog`;
 

@@ -19,7 +19,7 @@ import React, { useState, useEffect } from "react";
 
 import { adminCredentials } from "../constants/adminCredentials"; // Admin details
 
-const API_BASE_URL = "http://192.168.1.2:5000";
+const API_BASE_URL = "http://192.168.1.19:5000";
 const API_URL = `${API_BASE_URL}/api/register/register`;
 
 const RegisterForm = ({ onLoginClick }) => {

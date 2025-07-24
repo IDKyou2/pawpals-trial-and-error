@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://192.168.1.2:5000";
+const API_BASE_URL = "http://192.168.1.19:5000";
 // Define API URL constant
 const BASE_URL = `${API_BASE_URL}`;
 

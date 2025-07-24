@@ -21,7 +21,7 @@ import Footer from "./Footer";
 
 // Define API URL constants
 const BASE_URL =
-  Platform.OS === "android" ? "http://192.168.1.2:5000" : "http://192.168.1.2:5000";
+  Platform.OS === "android" ? "http://192.168.1.19:5000" : "http://192.168.1.19:5000";
 const USER_PROFILE_API_URL = `${BASE_URL}/api/auth/user/profile`;
 const NEW_POSTS_API_URL = `${BASE_URL}/api/posts/new-posts-count`;
 

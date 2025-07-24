@@ -14,7 +14,9 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { adminCredentials } from "../constants/adminCredentials"; // Admin details
 
-const API_BASE_URL = "http://192.168.1.2:5000";
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+//const API_BASE_URL = "http://192.168.1.19:5000";
 const API_URL = `${API_BASE_URL}/api/login/login`; // Login API endpoint
 
 
