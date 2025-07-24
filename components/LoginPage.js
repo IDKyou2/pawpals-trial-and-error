@@ -16,11 +16,11 @@ import { adminCredentials } from "../constants/adminCredentials"; // Admin detai
 
 
 
-// Using EXPO_PUBLIC_API_URL from .env file
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 //const API_BASE_URL = "192.168.1.1";  // hardcoding for testing
 
+// Using EXPO_PUBLIC_API_URL from .env file
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 const API_URL = `${API_BASE_URL}/api/login/login`; // Login API   endpoint
 
 

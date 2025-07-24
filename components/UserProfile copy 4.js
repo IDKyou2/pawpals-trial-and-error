@@ -311,7 +311,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
                 autoFocus
                 value={newFullName}
               />
-              {/* address */}
+              {/* Label */}
               <Text style={styles.editLabelText}>Address</Text>
               <TextInput
                 style={styles.contactInput}
@@ -321,9 +321,23 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
                 autoFocus
                 value={newAddress}
               />
-    
-
-            
+              {/*
+              <TextInput
+                style={styles.contactInput}
+                value={newContact}
+                onChangeText={(text) => {
+                  const numericText = text.replace(/[^0-9]/g, "");
+                  if (numericText.length <= 11) {
+                    setNewContact(numericText);
+                  }
+                }}
+                placeholder="Enter new contact number"
+                placeholderTextColor="#666"
+                keyboardType="number-pad"
+                maxLength={11}
+                autoFocus
+              />
+              */}
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
                   style={styles.saveButton}
