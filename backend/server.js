@@ -130,6 +130,7 @@ app.use(
 //console.log("Mongo URI:", process.env.MONGO_URI);
 //console.log("BASE_URL:", process.env.BASE_URL);
 
+//from .env file
 if (!process.env.MONGO_URI || process.env.MONGO_URI.trim() === "") {
   console.error("Error: MONGO_URI is not found in .env file");
   process.exit(1);
