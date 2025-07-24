@@ -21,7 +21,7 @@ import Footer from "./Footer";
 
 // Define API URL constants
 const BASE_URL =
-  Platform.OS === "android" ? "http://192.168.1.2:5000" : "http://192.168.1.2:5000";
+  Platform.OS === "android" ? "http://192.168.1.10:5000" : "http://192.168.1.10:5000";
 const USER_PROFILE_API_URL = `${BASE_URL}/api/auth/user/profile`;
 const NEW_POSTS_API_URL = `${BASE_URL}/api/posts/new-posts-count`;
 
@@ -278,6 +278,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
         </TouchableOpacity>
       </Modal>
 
+
       {/* User Profile Section */}
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.profileContainer}>
@@ -381,6 +382,8 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
           )}
         </View>
 
+
+
         {/* Inbox Section */}
         <View style={styles.inboxContainer}>
           <Text style={styles.inboxTitle}>Inbox</Text>
@@ -389,17 +392,32 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
             contentContainerStyle={{ paddingBottom: 20 }}
           >
             {messages.length > 0 ? (
-              console.log(messages),
-              [...messages]
-                .filter(
-                  (message) =>
-                    message.to === userData?.fullName ||
-                    message.from === userData?.fullName
-                )
+              // Group messages by conversation and get the latest one for each
+              Object.values(
+                [...messages]
+                  .filter(
+                    (message) =>
+                      message.to === userData?.fullName ||
+                      message.from === userData?.fullName
+                  )
+                  .reduce((acc, message) => {
+                    // Create a conversation key by combining the two participants in a consistent order
+                    const participants = [message.from, message.to].sort();
+                    const conversationKey = participants.join('_');
+
+                    // If we don't have this conversation yet, or this message is newer, keep it
+                    if (!acc[conversationKey] || message.timestamp > acc[conversationKey].timestamp) {
+                      acc[conversationKey] = message;
+                    }
+                    return acc;
+                  }, {})
+              )
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .map((message) => {
                   const isUnread = !message.read && message.to === userData?.fullName;
                   const isCurrentUser = message.from === userData?.fullName;
+                  const otherUser = isCurrentUser ? message.to : message.from;
+
                   return (
                     <TouchableOpacity
                       key={message.id}
@@ -407,7 +425,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
                         styles.messageItem,
                         isUnread && styles.unreadMessageItem
                       ]}
-                    //onPress={() => markAsRead(message.id)}
+                    // onPress={() => markAsRead(message.id)}
                     >
                       <Image
                         source={
@@ -421,20 +439,16 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
                       <View style={styles.messageContent}>
                         {isUnread && (
                           <View style={styles.unreadBadge}>
-                            <Text style={[styles.unreadBadgeText, { color: 'red', fontWeight: '600', }]}>New</Text>
+                            <Text style={[styles.unreadBadgeText, { color: 'red', fontWeight: '600' }]}>New</Text>
                           </View>
                         )}
+
                         <View style={styles.messageHeader}>
                           <Text style={styles.messageSender}>
-                            {isCurrentUser ? "You" : message.from}
-                          </Text>
-                          <Text style={styles.messageTime}>
-                            {new Date(message.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit"
-                            })}
+                            {otherUser}
                           </Text>
                         </View>
+
                         <Text
                           style={[
                             styles.messageText,
@@ -442,8 +456,16 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
                           ]}
                           numberOfLines={1}
                         >
-                          {message.text}
+                          {isCurrentUser ? "You: " : `: `}{message.text}
                         </Text>
+
+                        <Text style={styles.messageTime}>
+                          {new Date(message.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </Text>
+                        
                       </View>
                     </TouchableOpacity>
                   );
@@ -453,6 +475,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
             )}
           </ScrollView>
         </View>
+
       </ScrollView >
 
       {/* Footer */}

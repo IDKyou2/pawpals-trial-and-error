@@ -16,7 +16,7 @@ import io from "socket.io-client";
 import axios from "axios";
 
 const SERVER_URL =
-  Platform.OS === "android" ? "http://192.168.1.2:5000" : "http://192.168.1.2:5000";
+  Platform.OS === "android" ? "http://192.168.1.10:5000" : "http://192.168.1.10:5000";
 
 const PrivateChat = ({
   user,

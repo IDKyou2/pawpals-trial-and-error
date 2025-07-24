@@ -4,7 +4,7 @@ import axios from "axios";
 import { Platform } from "react-native";
 
 const SERVER_URL =
-  Platform.OS === "android" ? "http://192.168.1.2:5000" : "http://192.168.1.2:5000";
+  Platform.OS === "android" ? "http://192.168.1.10:5000" : "http://192.168.1.10:5000";
 
 const useChatCount = () => {
   const [newChatsCount, setNewChatsCount] = useState(0);

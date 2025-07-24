@@ -381,49 +381,85 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
           )}
         </View>
 
+
+
         {/* Inbox Section */}
         <View style={styles.inboxContainer}>
           <Text style={styles.inboxTitle}>Inbox</Text>
-          <ScrollView style={styles.messagesContainer} contentContainerStyle={{ paddingBottom: 20 }}>
+          <ScrollView
+            style={styles.messagesContainer}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          >
             {messages.length > 0 ? (
-              messages.map((message) => (
-                <View key={message.id} style={styles.messageItem}>
-                  <Image
-                    source={
-                      message.profilePic
-                        ? { uri: `${BASE_URL}${message.profilePic}` }
-                        : require("../assets/images/default-user.png")
-                    }
-                    style={styles.messageAvatar}
-                  />
-                  <View style={styles.messageContent}>
-                    <Text style={styles.messageSender}>
-                      {message.from === userData?.fullName
-                        ? "You"
-                        : message.from}
-                    </Text>
-                    <Text style={styles.messageText}>{message.text}</Text>
-                    <Text style={styles.messageTimestamp}>
-                      {message.timestamp.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </Text>
-                    {!message.read && message.to === userData?.fullName && (
-                      <Text style={styles.unreadText}>Unread</Text>
-                    )}
-                  </View>
-                </View>
-              ))
+              console.log(messages),
+              [...messages]
+                .filter(
+                  (message) =>
+                    message.to === userData?.fullName ||
+                    message.from === userData?.fullName
+                )
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .map((message) => {
+                  const isUnread = !message.read && message.to === userData?.fullName;
+                  const isCurrentUser = message.from === userData?.fullName;
+                  return (
+                    <TouchableOpacity
+                      key={message.id}
+                      style={[
+                        styles.messageItem,
+                        isUnread && styles.unreadMessageItem
+                      ]}
+                    //onPress={() => markAsRead(message.id)}
+                    >
+                      <Image
+                        source={
+                          message.profilePic
+                            ? { uri: `${BASE_URL}${message.profilePic}` }
+                            : require("../assets/images/default-user.png")
+                        }
+                        style={styles.messageAvatar}
+                      />
+
+                      <View style={styles.messageContent}>
+                        {isUnread && (
+                          <View style={styles.unreadBadge}>
+                            <Text style={[styles.unreadBadgeText, { color: 'red', fontWeight: '600', }]}>New</Text>
+                          </View>
+                        )}
+                        <View style={styles.messageHeader}>
+                          <Text style={styles.messageSender}>
+                            {isCurrentUser ? "You" : message.from}
+                          </Text>
+                          <Text style={styles.messageTime}>
+                            {new Date(message.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit"
+                            })}
+                          </Text>
+                        </View>
+                        <Text
+                          style={[
+                            styles.messageText,
+                            isUnread && styles.unreadMessageText
+                          ]}
+                          numberOfLines={1}
+                        >
+                          : {message.text}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })
             ) : (
               <Text style={styles.noMessages}>No messages yet.</Text>
             )}
           </ScrollView>
         </View>
-      </ScrollView>
+        
+      </ScrollView >
 
       {/* Footer */}
-      <Footer
+      < Footer
         onNavigateToHome={handleHomeClick}
         onNavigateToChatForum={handleMessageClick}
         handleNotificationClick={handleNotificationClick}
@@ -431,7 +467,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
         newPostsCount={newPostsCount}
       />
       {/* Confirmation Modal */}
-      <Modal
+      < Modal
         visible={confirmationModalVisible}
         transparent
         animationType="fade"
@@ -457,11 +493,11 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal >
 
       {/* Notification Modal */}
-      <NotificationModal isModalOpen={isModalOpen} closeModal={closeModal} />
-    </View>
+      < NotificationModal isModalOpen={isModalOpen} closeModal={closeModal} />
+    </View >
   );
 };
 

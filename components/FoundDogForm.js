@@ -49,7 +49,7 @@ const FoundDogForm = ({
   const delayBlur = useRef(null);
   const locationiqKey = "pk.0ee70983b8d94b132991d9b76b73102e";
   const debounceTimeout = useRef(null);
-  const NEW_POSTS_API_URL = `http://192.168.1.2:5000/api/posts/new-posts-count`;
+  const NEW_POSTS_API_URL = `http://192.168.1.10:5000/api/posts/new-posts-count`;
 
   
   useEffect(() => {
