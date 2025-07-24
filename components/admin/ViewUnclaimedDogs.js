@@ -60,10 +60,6 @@ const ViewUnclaimedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewUnclaim
             "Are you sure you want to delete this unclaimed dog?",
             [
                 {
-                    text: "No",
-                    style: "cancel",
-                },
-                {
                     text: "Yes",
                     style: "destructive",
                     onPress: async () => {
@@ -77,6 +73,10 @@ const ViewUnclaimedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewUnclaim
                         }
                     },
                 },
+                {
+                    text: "No",
+                    style: "cancel",
+                },
             ],
             { cancelable: true }
         );
@@ -87,7 +87,7 @@ const ViewUnclaimedDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewUnclaim
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
                     <Image
-                      source={require('../../assets/images/pawpals.png')}
+                        source={require('../../assets/images/pawpals.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

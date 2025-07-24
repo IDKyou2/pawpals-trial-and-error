@@ -57,12 +57,8 @@ const MissingDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewLostDogInfo }
     const handleRemoveDog = (dogId) => {
         Alert.alert(
             "Confirm Deletion",
-            "Are you sure you want to delete this missing dog?",
+            "Are you sure you want to delete this missing dog data?",
             [
-                {
-                    text: "No",
-                    style: "cancel",
-                },
                 {
                     text: "Yes",
                     style: "destructive",
@@ -77,6 +73,10 @@ const MissingDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewLostDogInfo }
                         }
                     },
                 },
+                {
+                    text: "No",
+                    style: "cancel",
+                },
             ],
             { cancelable: true }
         );
@@ -88,7 +88,7 @@ const MissingDogs = ({ onNavigateToAdminDashBoard, onNavigateToViewLostDogInfo }
             <View style={styles.header}>
                 <View style={styles.logoContainer}>
                     <Image
-                         source={require('../../assets/images/pawpals.png')}
+                        source={require('../../assets/images/pawpals.png')}
                         style={styles.logo}
                         resizeMode="contain"
                     />

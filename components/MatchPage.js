@@ -851,20 +851,18 @@ const MatchPage = ({
                         </Text>
                         <Text style={styles.newMatchModalTexts}>
                           Posted on:{" "}
-                          {selectedNewMatch.dog2?.createdAt
-                            ? formatDateTime(selectedNewMatch.dog2.createdAt)
-                            : "Not available"}
+                          {selectedNewMatch.dog2?.createdAt ? formatDateTime(selectedNewMatch.dog2.createdAt) : "Not available"}
                         </Text>
                       </>
                     )}
-                    <Text style={styles.newMatchModalText}>
-                      Category: <Text style={{ color: 'green' }}>{selectedNewMatch.dog2?.category || "Unknown"}</Text>
-                    </Text>
                     {showUserDetails && (
                       <TouchableOpacity onPress={() => setShowUserDetails(false)}>
                         <Text style={styles.moreLink}>Hide</Text>
                       </TouchableOpacity>
                     )}
+                    <Text style={styles.newMatchModalText}>
+                      Category: <Text style={{ color: 'green' }}>{selectedNewMatch.dog2?.category || "Unknown"}</Text>
+                    </Text>
                   </View>
                 </View>
                 <Text style={styles.isThisYourDogText}>Is this your missing pet dog?</Text>
