@@ -188,6 +188,12 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
   }
 
   const handleSaveChanges = () => {
+    if (newProfilePic === userData.profilePic && newFullName === userData.fullName && newAddress === userData.address) {
+      //Alert.alert("No changes made", "You haven't changed anything.");
+      setIsEditing(false);
+      return;
+    }
+
     if (!newProfilePic) {
       Alert.alert("Error", "Profile pic cannot be null. Please choose your display image.");
     }
@@ -200,11 +206,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
       setConfirmationModalVisible(true);
       return;
     }
-    if (newProfilePic === userData.profilePic && newFullName === userData.fullName && newAddress === userData.address) {
-      //Alert.alert("No changes made", "You haven't changed anything.");
-      setIsEditing(false);
-      return;
-    }
+
 
   };
 
@@ -258,8 +260,10 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
 
       if (response.status === 200) {
         // Updates UI
-        console.warn("Updated profile: {", "Full name: ", newFullName, ", Address: ", newAddress, "}");
+        console.warn("**************************************************");
+        console.warn("Updated profile: {", "Full name: ", newFullName, ", Address: ", newAddress, "Profile pic: ", newProfilePic, "}");
         //console.warn("Updated profile:", response.data)
+        console.warn("**************************************************");
 
         setUserData({
           ...userData,
