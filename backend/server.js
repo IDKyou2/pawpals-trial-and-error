@@ -28,6 +28,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const tf = require("@tensorflow/tfjs-node");
 const mobilenet = require("@tensorflow-models/mobilenet");
+const chalk = require('chalk');
 
 
 const allowedOrigins = [
@@ -177,6 +178,7 @@ io.on("connection", (socket) => {
           };
         })
       );
+      
       const messageCount = await Chat.countDocuments();
       console.log(
         "Broadcasting forum messages from 5000:",
@@ -332,7 +334,7 @@ const interfaces = os.networkInterfaces();
 Object.keys(interfaces).forEach((iface) => {
   interfaces[iface].forEach((details) => {
     if (details.family === 'IPv4' && !details.internal) {
-      console.log(`Server might be reachable at: http://${details.address}:5000`);
+      console.log(chalk.yellow(`Server might be reachable at: http://${details.address}:5000`));
     }
   });
 });

@@ -93,15 +93,19 @@ const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) 
       );
 
       if (response.data.success) {
+
         console.log(`[${new Date().toLocaleString()}] User ${username} has logged in successfully.`);
+        
         await AsyncStorage.multiSet([
           ["token", response.data.token],
           ["user", JSON.stringify(response.data.user)],
         ]);
+
         onLoginSuccess(false);
       } else {
         setErrorMessage("Login failed. Please check your credentials.");
       }
+
     } catch (error) {
       let errorMsg = "Login failed. Please try again.";
 

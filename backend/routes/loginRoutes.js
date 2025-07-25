@@ -74,8 +74,10 @@ router.post("/login", async (req, res) => {
         username: user.username,
         fullName: user.fullName,
         profilePic: user.profilePic
-      }
+      },
     });
+
+   
 
   } catch (error) {
     console.error("Login error:", error);
