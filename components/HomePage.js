@@ -17,7 +17,7 @@ import NotificationModal from "./NotificationModal";
 import Footer from "./Footer";
 
 
-const API_BASE_URL = "http://192.168.1.10:5000";
+const API_BASE_URL = "http://192.168.1.7:5000";
 // Define API URL constants
 const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
 const profileApi = `${API_BASE_URL}/api/auth/user/profile`;
@@ -116,11 +116,7 @@ const HomePage = ({
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Image
-          source={require('../assets/images/pawpals.png')}
-          style={styles.logo}
-          resizeMode="cover"
-        />
+        <Text></Text>
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />

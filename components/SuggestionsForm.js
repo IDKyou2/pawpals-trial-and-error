@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Footer from "./Footer";
 
 // Define API URL constant
-const BASE_URL = "http://192.168.1.10:5000";
+const BASE_URL = "http://192.168.1.7:5000";
 
 const SuggestionsForm = ({
   onBackClick,

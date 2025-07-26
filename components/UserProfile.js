@@ -25,7 +25,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 // Define API URL constants
 const BASE_URL =
-  Platform.OS === "android" ? "http://192.168.1.10:5000" : "http://192.168.1.10:5000";
+  Platform.OS === "android" ? "http://192.168.1.7:5000" : "http://192.168.1.7:5000";
 const USER_PROFILE_API_URL = `${BASE_URL}/api/auth/user/profile`;
 const NEW_POSTS_API_URL = `${BASE_URL}/api/posts/new-posts-count`;
 
@@ -67,7 +67,6 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
         if (userResponse.status === 200) {
           setUserData({
             fullName: userResponse.data.fullName || "",
-            contact: userResponse.data.contact || "",
             email: userResponse.data.email || "",
             profilePic: userResponse.data.profilePic,
             address: userResponse.data.address, // ---------------- newly added -------------- //
@@ -178,21 +177,29 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
   const handleEditInfo = () => {
     setIsEditing(true);
 
+    console.log("****************************************************************");
+    console.warn("Edit info clicked (Getting user details):");
     console.warn("profilePic: ", userData?.profilePic);
     console.warn("full name: ", userData?.fullName);
     console.warn("address: ", userData?.address);
+    console.log("****************************************************************");
 
     setNewFullName(userData?.fullName || "Error fetching full name"); // get user full name
     setNewAddress(userData?.address || "Error fetching address"); // get user address
-    setNewProfilePic(userData?.profilePic || "Error fetching profile picture"); // get user address
+    setNewProfilePic(userData?.profilePic || "Error fetching profile picture");
   }
 
   const handleSaveChanges = () => {
+
+    console.log(userData.profilePic);
+    console.log(newProfilePic);
+
     if (newProfilePic === userData.profilePic && newFullName === userData.fullName && newAddress === userData.address) {
       //Alert.alert("No changes made", "You haven't changed anything.");
       setIsEditing(false);
       return;
     }
+
 
     if (!newProfilePic) {
       Alert.alert("Error", "Profile pic cannot be null. Please choose your display image.");
@@ -211,9 +218,14 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
   };
 
 
-
   const handleYesChanges = async () => {
     // Are you sure you want to save these changes? -Yes
+
+    console.log("****************************************************************");
+    console.log("Saving new changes: ");
+    console.warn("Updated profilePic: ", newProfilePic);
+    console.warn("Updated full name: ", newFullName);
+    console.warn("Updated address: ", newAddress);
 
     const token = await AsyncStorage.getItem("token");
     if (!token) return;
@@ -259,11 +271,6 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
       );
 
       if (response.status === 200) {
-        // Updates UI
-        console.warn("**************************************************");
-        console.warn("Updated profile: {", "Full name: ", newFullName, ", Address: ", newAddress, "Profile pic: ", newProfilePic, "}");
-        //console.warn("Updated profile:", response.data)
-        console.warn("**************************************************");
 
         setUserData({
           ...userData,
@@ -289,6 +296,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
       Alert.alert("Error", "Failed to update profile. Please try again.");
     }
   };
+
 
 
   const handleNoChanges = () => {

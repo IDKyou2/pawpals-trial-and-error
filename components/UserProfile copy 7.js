@@ -19,9 +19,13 @@ import useChatCount from "./hooks/useChatCount";
 import NotificationModal from "./NotificationModal";
 import Footer from "./Footer";
 
+import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
+
+
 // Define API URL constants
 const BASE_URL =
-  Platform.OS === "android" ? "http://192.168.1.10:5000" : "http://192.168.1.10:5000";
+  Platform.OS === "android" ? "http://192.168.1.7:5000" : "http://192.168.1.7:5000";
 const USER_PROFILE_API_URL = `${BASE_URL}/api/auth/user/profile`;
 const NEW_POSTS_API_URL = `${BASE_URL}/api/posts/new-posts-count`;
 
@@ -30,9 +34,12 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  // For editing user details 
   const [newFullName, setNewFullName] = useState("");
   const [newContact, setNewContact] = useState("");
   const [newAddress, setNewAddress] = useState("");
+  const [newProfilePic, setNewProfilePic] = useState(null); // Add this state
+
 
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
   const [newPostsCount, setNewPostsCount] = useState(0);
@@ -41,6 +48,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
   const newChatsCount = useChatCount();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
 
   useEffect(() => {
     const fetchUserDataAndPostsCount = async () => {
@@ -65,9 +73,12 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
             address: userResponse.data.address, // ---------------- newly added -------------- //
           });
 
+          /*
           setNewFullName(userResponse.data.fullName || "");
           setNewContact(userResponse.data.contact || "");
           setNewAddress(userResponse.data.address || "");
+          */
+
 
           const messagesResponse = await axios.get(
             `${BASE_URL}/api/chat/private-messages/${userResponse.data.fullName}`,
@@ -150,28 +161,47 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
     onNavigateToHome?.();
     setMenuOpen(false);
   };
+
   const handleProfileClick = () => setMenuOpen(false);
   const logout = async () => {
     await AsyncStorage.removeItem("token");
     onLogout?.();
     setMenuOpen(false);
   };
+
   const handleLogoutClick = () => logout();
   const handleMessageClick = () => onNavigateToChatForum?.();
   const handleNotificationClick = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const handleEditAccount = () => {
+
+  const handleEditInfo = () => {
     setIsEditing(true);
+
+    console.log("****************************************************************");
+    console.warn("Edit info clicked (Getting user details):");
+    console.warn("profilePic: ", userData?.profilePic);
+    console.warn("full name: ", userData?.fullName);
+    console.warn("address: ", userData?.address);
+    console.log("****************************************************************");
+
+    setNewFullName(userData?.fullName || "Error fetching full name"); // get user full name
+    setNewAddress(userData?.address || "Error fetching address"); // get user address
+    setNewProfilePic(userData?.profilePic || "Error fetching profile picture"); // get user address
   }
 
   const handleSaveChanges = () => {
-    if (newFullName === userData.fullName && newAddress === userData.address) {
-      //Alert.alert("No changes made", "You haven't changed your full name.");
+    if (newProfilePic === userData.profilePic && newFullName === userData.fullName && newAddress === userData.address) {
+      //Alert.alert("No changes made", "You haven't changed anything.");
       setIsEditing(false);
       return;
     }
-    if (!newFullName.trim()) {
+
+
+    if (!newProfilePic) {
+      Alert.alert("Error", "Profile pic cannot be null. Please choose your display image.");
+    }
+    else if (!newFullName.trim()) {
       Alert.alert("Error", "Full name cannot be empty. Please enter your updated full name.");
     } else if (!newAddress.trim()) {
       Alert.alert("Error", "Your address cannot be empty. Please enter your updated address.");
@@ -180,14 +210,44 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
       setConfirmationModalVisible(true);
       return;
     }
+
+
   };
 
-  const handleConfirmChange = async () => {
+
+
+  const handleYesChanges = async () => {
+    // Are you sure you want to save these changes? -Yes
+
+    console.log("****************************************************************");
+    console.log("Saving new changes: ");
+    console.warn("Updated profilePic: ", newProfilePic);
+    console.warn("Updated full name: ", newFullName);
+    console.warn("Updated address: ", newAddress);
 
     const token = await AsyncStorage.getItem("token");
     if (!token) return;
 
+
     try {
+      const formData = new FormData();
+
+
+      // Add fullName, contact, address as text fields
+      formData.append("fullName", newFullName);
+      formData.append("contact", newContact);
+      formData.append("address", newAddress);
+
+
+      if (newProfilePic) {
+        formData.append("profilePic", {
+          uri: newProfilePic.uri,
+          type: newProfilePic.type || "image/jpeg",
+          name: "profile.jpg",
+        });
+      }
+
+
       // Updates database
       const response = await axios.put(
         USER_PROFILE_API_URL,
@@ -196,51 +256,98 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
           fullName: newFullName,
           contact: newContact,
           address: newAddress,
+          profilePic: newProfilePic
         },
+
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+            //"Content-Type": "multipart/form-data", // ✅ Must be multipart for file upload
           },
         }
       );
+
       if (response.status === 200) {
-        // Updates UI
-        console.warn("Updated profile: {", "Full name: ", newFullName, ", Address: ", newAddress, "}");
-        //console.warn("Updated profile:", response.data)
-        setUserData({ ...userData, contact: newContact, fullName: newFullName, address: newAddress });
+
+        setUserData({
+          ...userData,
+          contact: newContact,
+          fullName: newFullName,
+          address: newAddress,
+          profilePic: response.data.user.profilePic,
+        });
+
         setIsEditing(false);
         setConfirmationModalVisible(false);
         setSuccess("Changes saved successfully");
+
         setTimeout(() => {
           setSuccess(null);
         }, 5000); // 5 seconds
 
         setError(null);
       }
+
     } catch (error) {
       console.error("Error updating user profile:", error);
+      Alert.alert("Error", "Failed to update profile. Please try again.");
     }
+
+    // Updates UI
+    console.log("*************************************************************************************************");
+    console.warn("Final Updated profile:");
+    console.warn("Full Name:", userData.fullName);
+    console.warn("Address:", userData.address);
+    console.warn("Profile Pic:", userData.profilePic);
+    console.log("*************************************************************************************************");
   };
 
-  const noChanges = () => {
 
+  const handleNoChanges = () => {
     setConfirmationModalVisible(false);
     //setIsEditing(false);
 
+    /*
     setNewFullName(userData?.fullName || "Error fetching full name"); // get user full name
     setNewAddress(userData?.address || "Error fetching address"); // get user address
+    setNewProfilePic(userData?.profilePic || "Error fetching profile picture"); // get user address
+    */
+
     //setNewContact(userData?.contact || "Error fetching contact");
   };
 
-  const handleCancelChange = () => {
 
+  const handleCancelChange = () => {
     setConfirmationModalVisible(false);
     setIsEditing(false);
 
+    /*
     setNewFullName(userData?.fullName || "Error fetching full name"); // get user full name
     setNewAddress(userData?.address || "Error fetching address"); // get user address
     //setNewContact(userData?.contact || "Error fetching contact");
+    */
+  };
+
+
+  const handleChoosePhoto = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      Alert.alert("Permission required", "We need access to your photos to change your profile picture.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets?.length > 0) {
+      setNewProfilePic(result.assets[0]); // Store the whole asset object
+    }
   };
 
   return (
@@ -282,102 +389,97 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
       {/* User Profile Section */}
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.profileContainer}>
-          <Image
-            source={
-              userData?.profilePic
-                ? { uri: `${BASE_URL}${userData.profilePic}` }
-                : require("../assets/images/default-user-profile.png")
-            }
-            style={styles.profileImage}
-            onError={() => console.log("Image failed to load.")}
-          />
+
+
+          {/* Show current profile image */}
+          {/* Profile Image with optional edit icon */}
+          <View style={styles.profileImageWrapper}>
+            <Image
+              source={
+                newProfilePic && newProfilePic.uri
+                  ? { uri: newProfilePic.uri }
+                  : userData?.profilePic
+                    ? { uri: `${BASE_URL}${userData.profilePic}` }
+                    : require("../assets/images/default-user-profile.png")
+              }
+              style={styles.profileImage}
+              onError={() => console.log("Image failed to load.")}
+            />
+
+          </View>
+
+          {isEditing && (
+            <TouchableOpacity style={styles.editIconOverlay} onPress={handleChoosePhoto}>
+              <Ionicons name="camera" size={24} color="#000" />
+            </TouchableOpacity>
+          )}
+
+          {/* Display full name */}
           <Text style={styles.profileNameText}>
             {userData?.fullName || ""}
           </Text>
 
-          {/* -------------------------------------------------------------------- Editing mode ------------------------------------------------------ */}
+          {/* Editing Mode */}
           {isEditing ? (
             <View style={styles.editContainer}>
-              {/* Label */}
+              {/* Full Name Label */}
               <Text style={styles.editLabelText}>Full name</Text>
 
               {error && <Text style={styles.errorMessage}>{error}</Text>}
 
               <TextInput
-                style={styles.contactInput}
+                style={styles.userInput}
                 onChangeText={(text) => setNewFullName(text)}
                 placeholder="Enter your full name"
                 placeholderTextColor="#666"
                 autoFocus
                 value={newFullName}
               />
-              {/* Label */}
+
+              {/* Address Label */}
               <Text style={styles.editLabelText}>Address</Text>
               <TextInput
-                style={styles.contactInput}
+                style={styles.userInput}
                 onChangeText={(text) => setNewAddress(text)}
                 placeholder="Enter your new address"
                 placeholderTextColor="#666"
-                autoFocus
                 value={newAddress}
               />
-              {/*
-              <TextInput
-                style={styles.contactInput}
-                value={newContact}
-                onChangeText={(text) => {
-                  const numericText = text.replace(/[^0-9]/g, "");
-                  if (numericText.length <= 11) {
-                    setNewContact(numericText);
-                  }
-                }}
-                placeholder="Enter new contact number"
-                placeholderTextColor="#666"
-                keyboardType="number-pad"
-                maxLength={11}
-                autoFocus
-              />
-              */}
+
+              {/* Save/Cancel Buttons */}
               <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.saveButton}
-                  onPress={handleSaveChanges}
-                >
+                <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
                   <Text style={styles.saveButtonText}>Save</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={handleCancelChange}
-                >
+                <TouchableOpacity style={styles.cancelButton} onPress={handleCancelChange}>
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
           ) : (
             <View style={styles.profileCard}>
+              {/* Success message */}
               {success && (
                 <View style={styles.successContainer}>
                   <Text style={styles.successMessage}>{success}</Text>
                 </View>
               )}
+
+              {/* Display user details */}
               <Text style={styles.userDataText}>
                 Full name: {userData?.fullName || <ActivityIndicator size="small" color="#FFD700" />}
               </Text>
               {/*
               <Text style={styles.userDataText}>
-                Email: {userData?.email || "..."}
-              </Text>
-              */}
-              <Text style={styles.userDataText}>
                 Contact #: {userData?.contact || <ActivityIndicator size="small" color="#FFD700" />}
               </Text>
+               */}
               <Text style={styles.userDataText}>
                 Address: {userData?.address || <ActivityIndicator size="small" color="#FFD700" />}
               </Text>
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={handleEditAccount}
-              >
+
+              {/* Edit Info Button */}
+              <TouchableOpacity style={styles.editButton} onPress={handleEditInfo}>
                 <Text style={styles.editButtonText}>Edit Info</Text>
               </TouchableOpacity>
             </View>
@@ -467,7 +569,7 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
                             minute: "2-digit"
                           })}
                         </Text>
-                        
+
                       </View>
                     </TouchableOpacity>
                   );
@@ -502,13 +604,13 @@ const UserProfile = ({ onNavigateToHome, onLogout, onNavigateToChatForum }) => {
             <View style={styles.confirmationButtons}>
               <TouchableOpacity
                 style={styles.confirmButton}
-                onPress={handleConfirmChange}
+                onPress={handleYesChanges}
               >
                 <Text style={styles.confirmButtonText}>Yes</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.cancelButton}
-                onPress={noChanges}
+                onPress={handleNoChanges}
               >
                 <Text style={styles.cancelButtonText}>No</Text>
               </TouchableOpacity>
@@ -744,7 +846,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Roboto",
   },
-  contactInput: {
+  userInput: {
     backgroundColor: "#F9F9F9",
     borderRadius: 10,
     padding: 12,

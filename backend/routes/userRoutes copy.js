@@ -23,6 +23,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+
+
 // Registration route to enforce lowercase username
 router.post("/register", async (req, res) => {
   // Register user account to database
@@ -67,6 +69,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+
 // For updating user details
 router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -81,8 +84,13 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
 
     console.log("Updating with:", req.body);
 
+    // Prevent updating username (if it exists in the request)
+    if (req.body.username) {
+      return res.status(400).json({ message: "Username cannot be changed" });
+    }
+
     const updateData = {};
-    
+
     if (fullName) updateData.fullName = fullName;
     if (contact) updateData.contact = contact;
     if (address) updateData.address = address;
@@ -93,10 +101,9 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ message: "No fields provided to update" });
     }
+
     // updated user details
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-      new: true,
-    });
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true, select: '-password' }); // Exclude password from the returned data
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -105,6 +112,7 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
     res.json({
       message: "Profile updated successfully",
       user: {
+        username: updatedUser.username, // Include username in response
         fullName: updatedUser.fullName,
         contact: updatedUser.contact,
         profilePic: updatedUser.profilePic
@@ -114,9 +122,15 @@ router.put("/user/profile", upload.single("profilePic"), async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating user profile:", error);
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    }
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+
 
 router.get("/user/profile", async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -134,9 +148,8 @@ router.get("/user/profile", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     res.json({
-      
+
       fullName: userData.fullName,
-      contact: userData.contact,
       email: userData.email,
       profilePic: userData.profilePic
         ? `/uploads/pictures/${path.basename(userData.profilePic)}`
@@ -148,6 +161,7 @@ router.get("/user/profile", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
