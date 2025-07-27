@@ -155,7 +155,7 @@ const LostDogPage = ({
         <Image
           source={require('../assets/images/pawpals.png')}
           style={styles.logo}
-          resizeMode="cover"
+          resizeMode="contain"
         />
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
@@ -355,8 +355,9 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   logo: {
-    width: 100,
+    width: 50,
     height: "100%",
+    tintColor: 'white',
   },
   headerText: {
     fontSize: 28,

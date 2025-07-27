@@ -2,6 +2,7 @@ const API_BASE_URL = "http://192.168.1.7:5000";
 const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
 const LOST_DOG_API_URL = `${API_BASE_URL}/api/lostdog`;
 
+
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -20,6 +21,8 @@ import axios from "axios";
 import useChatCount from "./hooks/useChatCount";
 import NotificationModal from "./NotificationModal";
 import Footer from "./Footer";
+
+
 
 const LostDogFormConfirmation = ({
   onNavigateToHome,
@@ -198,7 +201,17 @@ const LostDogFormConfirmation = ({
         } else {
           console.error("Navigation functions are not defined!");
         }
+
         Alert.alert("Report submitted", "Please wait for a moment, we will be checking if we have a match for your missing dog.");
+        Toast.show('Report submitted. Checking for matches...', {
+          duration: Toast.durations.SHORT, // or LONG (3500ms)
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        });
+
         console.log("Report submitted", "Lost dog reported successfully!");
       }
     } catch (error) {

@@ -1012,13 +1012,16 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
   },
   navBar: {
-    backgroundColor: "#FFF",
+    backgroundColor: "transparent",
     paddingVertical: 10,
+    paddingHorizontal: 5,
+    /*
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
+   */
   },
   navButton: {
     /*
@@ -1053,13 +1056,13 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: "#FFF",
+
   },
   searchInput: {
     backgroundColor: "#F9F9F9",
     borderRadius: 10,
     padding: 12,
-    fontSize: 16,
+    fontSize: 14,
     color: "#333",
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.1)",

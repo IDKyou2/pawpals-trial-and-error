@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   View,
@@ -13,7 +13,6 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { adminCredentials } from "../constants/adminCredentials"; // Admin details
-
 
 
 
@@ -93,9 +92,9 @@ const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) 
       );
 
       if (response.data.success) {
-
+       
         console.log(`[${new Date().toLocaleString()}] User ${username} has logged in successfully.`);
-        
+
         await AsyncStorage.multiSet([
           ["token", response.data.token],
           ["user", JSON.stringify(response.data.user)],
@@ -114,8 +113,23 @@ const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) 
         const message = error.response.data?.message || errorMsg;
 
         if (status === 400) {
+
+          Toast.show('Invalid credentials', {
+            duration: Toast.durations.SHORT, // or LONG (3500ms)
+            position: Toast.positions.CENTER,
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+            textColor: 'red',
+            backgroundColor: 'red',
+          });
+
           console.warn("Login Error (400):", message);
           errorMsg = message;
+
+
+
         } else if (status === 401) {
           console.warn("Login Error (401):", message);
           errorMsg = message;

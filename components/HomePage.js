@@ -116,7 +116,14 @@ const HomePage = ({
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text></Text>
+        {/*
+        <Text style={styles.appNameText}>Pawpals</Text>
+         */}
+        <Image
+          source={require('../assets/images/pawpals.png')}
+          style={styles.logo}
+          resizeMode="cover"
+        />
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
@@ -253,14 +260,22 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
   },
+  appNameText: {
+    color: "white",
+    fontSize: 15,
+    letterSpacing: 1,
+    fontWeight: '600',
+    fontFamily: 'Roboto',
+  },
   logo: {
-    width: 100,
+    width: 90,
     height: "100%",
-    //borderRadius: 100,
+    tintColor: 'white',
   },
   headerText: {
     fontSize: 28,
     fontWeight: 'bold',
+    //bright yellow
     color: '#FFD700',
     fontFamily: 'Roboto',
   },
