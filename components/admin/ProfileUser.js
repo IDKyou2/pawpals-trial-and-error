@@ -4,7 +4,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollVi
 const ProfileUserScreen = ({ onNavigateToManageUsersScreen, user }) => {
     const defaultImage = require('../../assets/images/default-user.png');
     const profileImage = user?.profilePic && user.profilePic !== 'uploads/'
-        ? { uri: `http://192.168.1.7:5000/${user.profilePic}` }
+        ? { uri: `http://192.168.1.12:5000/${user.profilePic}` }
         : defaultImage;
 
     return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_BASE_URL = "http://192.168.1.7:5000";
+const API_BASE_URL = "http://192.168.1.12:5000";
 
 // Define API URL constants
 const BASE_URL = `${API_BASE_URL}`;
@@ -155,13 +155,13 @@ const LostDogPage = ({
         <Image
           source={require('../assets/images/pawpals.png')}
           style={styles.logo}
-          resizeMode="contain"
+          resizeMode="cover"
         />
         <TouchableOpacity onPress={toggleMenu} style={styles.hamburgerButton}>
           <View style={styles.hamburger}>
             <View style={styles.hamburgerLine} />
             <View style={styles.hamburgerLine} />
-            <View style={styles.hamburgerLine} />
+            <View style={styles.hamburgerLine} /> 
           </View>
         </TouchableOpacity>
       </View>
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   logo: {
-    width: 50,
+    width: 90,
     height: "100%",
     tintColor: 'white',
   },

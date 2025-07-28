@@ -1,5 +1,5 @@
-//const API_URL = "http://192.168.1.7:5000/api/login/login";
-const API_BASE_URL = "http://192.168.1.7:5000";
+//const API_URL = "http://192.168.1.12:5000/api/login/login";
+const API_BASE_URL = "http://192.168.1.12:5000";
 const API_URL = `${API_BASE_URL}/api/login/login`; //
 
 import React, { useState } from "react";

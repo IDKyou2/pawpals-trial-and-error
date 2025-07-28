@@ -6,9 +6,16 @@ const router = express.Router();
 
 // Enhanced Login Route
 router.post("/login", async (req, res) => {
-  //console.log("Received login request:", req.body); 
+  //console.log("Received login request:", req.body);
   const { username, password } = req.body;
   try {
+
+    if (!username && !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and password cannot be blank."
+      });
+    }
     //
     if (/\s/.test(username) || /\s/.test(password)) {
       return res.status(400).json({
@@ -77,7 +84,7 @@ router.post("/login", async (req, res) => {
       },
     });
 
-   
+
 
   } catch (error) {
     console.error("Login error:", error);

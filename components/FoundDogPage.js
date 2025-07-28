@@ -38,7 +38,7 @@ const FoundDogPage = ({
   const [loading, setLoading] = useState(true);
 
   // Define API URL constants
-  const API_BASE_URL = "http://192.168.1.7:5000";
+  const API_BASE_URL = "http://192.168.1.12:5000";
 
   const FOUND_DOG_API_URL = `${API_BASE_URL}/api/founddog`;
   const NEW_POSTS_API_URL = `${API_BASE_URL}/api/posts/new-posts-count`;
@@ -337,8 +337,9 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   logo: {
-    width: 100,
+    width: 90,
     height: "100%",
+    tintColor: 'white',
   },
   headerText: {
     fontSize: 28,

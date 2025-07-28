@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { adminCredentials } from "../constants/adminCredentials"; // Admin details
+import Toast from 'react-native-root-toast';
 
 
 
@@ -32,6 +33,7 @@ const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) 
 
 
   const handleLoginSubmit = async () => {
+
     // Check for suspicious characters
     const isSuspicious =
       /[{}<>$;'"\\]/.test(username) || /[{}<>$;'"\\]/.test(password);
@@ -75,7 +77,6 @@ const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) 
     try {
       if (!API_URL) {
         console.warn("API_URL is not defined. Check your .env configuration.");
-        setErrorMessage("API configuration error. Please contact support.");
         return;
       }
 
@@ -91,8 +92,11 @@ const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) 
         }
       );
 
+
+
+
       if (response.data.success) {
-       
+
         console.log(`[${new Date().toLocaleString()}] User ${username} has logged in successfully.`);
 
         await AsyncStorage.multiSet([
@@ -113,22 +117,21 @@ const LoginPage = ({ onSignUpClick, onLoginSuccess, navigateToAdminDashBoard }) 
         const message = error.response.data?.message || errorMsg;
 
         if (status === 400) {
-
+          
           Toast.show('Invalid credentials', {
-            duration: Toast.durations.SHORT, // or LONG (3500ms)
+            duration: Toast.durations.SHORT,
             position: Toast.positions.CENTER,
             shadow: true,
             animation: true,
             hideOnPress: true,
             delay: 0,
-            textColor: 'red',
-            backgroundColor: 'red',
+            textStyle: { color: 'white' },
+            containerStyle: { backgroundColor: 'red' },
           });
+
 
           console.warn("Login Error (400):", message);
           errorMsg = message;
-
-
 
         } else if (status === 401) {
           console.warn("Login Error (401):", message);

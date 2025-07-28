@@ -21,7 +21,7 @@ import Footer from "./Footer";
 
 
 const SERVER_URL =
-  Platform.OS === "android" ? `http://192.168.1.7:5000` || "http://10.0.2.2:5000" : "http://192.168.1.7:5000";
+  Platform.OS === "android" ? `http://192.168.1.12:5000` || "http://10.0.2.2:5000" : "http://192.168.1.12:5000";
 
 const ChatForum = ({
   onNavigateToHome,

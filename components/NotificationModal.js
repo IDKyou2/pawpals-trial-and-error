@@ -17,7 +17,7 @@ const NotificationModal = ({ isModalOpen, closeModal }) => {
   const [notifications, setNotifications] = useState([]);
 
   // Define API URL constant
-  const NEW_POSTS_API_URL = "http://192.168.1.7:5000/api/posts/new-posts";
+  const NEW_POSTS_API_URL = "http://192.168.1.12:5000/api/posts/new-posts";
 
   useEffect(() => {
     if (isModalOpen) {

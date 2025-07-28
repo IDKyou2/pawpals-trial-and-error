@@ -13,7 +13,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Define API URL constant
-const BASE_URL = "http://192.168.1.7:5000";
+const BASE_URL = "http://192.168.1.12:5000";
 
 const MatchPageMoreInfoFound = ({
   dog,

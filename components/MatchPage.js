@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_BASE_URL = "http://192.168.1.7:5000";
+const API_BASE_URL = "http://192.168.1.12:5000";
 
 // Define API URL constants
 const BASE_URL = `${API_BASE_URL}`;
@@ -825,12 +825,20 @@ const MatchPage = ({
                       }
                       style={styles.newMatchModalImage}
                     />
+
                     <Text style={styles.newMatchModalText}>Posted by:</Text>
                     <View style={styles.nameContainer}>
                       <Text style={styles.newMatchModalTexts}>
                         {showUserDetails
                           ? selectedNewMatch.dog2?.userId?.fullName || "Unknown"
                           : getFullName(selectedNewMatch.dog2?.userId?.fullName)}
+                        <Text style={[styles.newMatchModalText, { color: 'green' },]}>
+                          {" "}(
+                          {selectedNewMatch.dog2?.category === "Found"
+                            ? "Finder"
+                            : selectedNewMatch.dog2?.category || "Unknown"}
+                          )
+                        </Text>
                       </Text>
                       {!showUserDetails && (
                         <TouchableOpacity onPress={() => setShowUserDetails(true)}>
@@ -860,9 +868,11 @@ const MatchPage = ({
                         <Text style={styles.moreLink}>Hide</Text>
                       </TouchableOpacity>
                     )}
+                    {/*
                     <Text style={styles.newMatchModalText}>
                       Category: <Text style={{ color: 'green' }}>{selectedNewMatch.dog2?.category || "Unknown"}</Text>
                     </Text>
+                     */}
                   </View>
                 </View>
                 <Text style={styles.isThisYourDogText}>Is this your missing pet dog?</Text>
@@ -1174,6 +1184,8 @@ const styles = StyleSheet.create({
     color: "#0066cc",
     textDecorationLine: "underline",
     fontFamily: "Roboto",
+    fontWeight: "700",
+
   },
   buttonContainer: {
     flexDirection: "row",
@@ -1322,7 +1334,7 @@ const styles = StyleSheet.create({
     color: "#6B4E31",
     fontWeight: "500",
     fontFamily: "Roboto",
-    textAlign: 'center',
+    textAlign: 'justify',
   },
   newMatchModalImages: {
     flexDirection: "column",

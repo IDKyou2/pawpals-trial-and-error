@@ -30,10 +30,10 @@ const mobilenet = require("@tensorflow-models/mobilenet");
 
 
 const allowedOrigins = [
-  "http://192.168.1.7:3000",
-  "http://192.168.1.7:8081",
-  "http://192.168.1.7:8080",
-  "http://192.168.1.7:5000",
+  "http://192.168.1.12:3000",
+  "http://192.168.1.12:8081",
+  "http://192.168.1.12:8080",
+  "http://192.168.1.12:5000",
   "http://localhost:8081", // For local development
 ];
 

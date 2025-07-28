@@ -4,7 +4,7 @@
     "slug": "Pawpals",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/pawpals.png",
+    "icon": "./assets/images/pawpals-1024.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -43,8 +43,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "ba3eaad9-8dc3-47d1-bacd-74011edaa524"
+        "projectId": "60966561-4c1a-4be4-9620-0a2d73ef0f95"
       }
-    }
+    },
+    "owner": "mjey"
   }
 }
